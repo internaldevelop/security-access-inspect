@@ -59,7 +59,7 @@ class AboutView extends React.Component {
 
     GetSystemInfo() {
         let params = { sys_type: GetSystemType() };
-        HttpRequest.asyncGet(this.GetSystemInfoCB, '/sysinfo/version', params);
+        HttpRequest.asyncGet(this.GetSystemInfoCB, '/embed-terminal/sysinfo/about', params);
     }
 
     render() {

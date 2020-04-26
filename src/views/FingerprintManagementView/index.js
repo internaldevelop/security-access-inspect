@@ -70,7 +70,7 @@ class FingerprintManagementView extends React.Component {
 
     queryEquips = (targetPage, pageSize) => {
         let startSet = (targetPage - 1) * pageSize + 1;
-        RestReq.asyncGet(this.queryEquipsCB, '/fw-bend-server/assets/get-assets', { /*offset: startSet, count: pageSize*/ }, { token: false });
+        RestReq.asyncGet(this.queryEquipsCB, '/embed-terminal/assets/get-assets', { /*offset: startSet, count: pageSize*/ }, { token: false });
     }
 
     queryEquipsCB = (data) => {
@@ -139,7 +139,7 @@ class FingerprintManagementView extends React.Component {
             message.info('起始IP不能比截至IP大！');
             return;
         }
-        RestReq.asyncGet(this.getFirmwareInfoCB, '/fw-bend-server/authenticate/scan-get-equipment', { start_ip: this.state.startIP, end_ip: this.state.endIP }, { token: false });
+        RestReq.asyncGet(this.getFirmwareInfoCB, '/embed-terminal/authenticate/scan-get-equipment', { start_ip: this.state.startIP, end_ip: this.state.endIP }, { token: false });
     };
 
     handleStartIPInputValue = (event) => {

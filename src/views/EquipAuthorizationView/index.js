@@ -75,7 +75,7 @@ class EquipAuthorizationView extends React.Component {
 
     queryBlackEquips = (targetPage, pageSize) => {
         let startSet = (targetPage - 1) * pageSize + 1;
-        return RestReq.asyncGet(this.queryBlackEquipsCB, '/fw-bend-server/assets/get-assets', { empower_flag: -1 }, { token: false });
+        return RestReq.asyncGet(this.queryBlackEquipsCB, '/embed-terminal/assets/get-assets', { empower_flag: -1 }, { token: false });
     }
 
     queryWhiteEquipsCB = (data) => {
@@ -95,7 +95,7 @@ class EquipAuthorizationView extends React.Component {
 
     queryWhiteEquips = (targetPage, pageSize) => {
         let startSet = (targetPage - 1) * pageSize + 1;
-        return RestReq.asyncGet(this.queryWhiteEquipsCB, '/fw-bend-server/assets/get-assets', { empower_flag: 1 }, { token: false });
+        return RestReq.asyncGet(this.queryWhiteEquipsCB, '/embed-terminal/assets/get-assets', { empower_flag: 1 }, { token: false });
     }
 
     getAuthorizationTag = (type) => {
@@ -119,9 +119,9 @@ class EquipAuthorizationView extends React.Component {
     queryEquips = (targetPage, pageSize) => {
         let startSet = (targetPage - 1) * pageSize + 1;
         if (this.state.equipValue !== '') {
-            return RestReq.asyncGet(this.queryEquipsCB, '/fw-bend-server/assets/get-assets', { name: this.state.equipValue }, { token: false });
+            return RestReq.asyncGet(this.queryEquipsCB, '/embed-terminal/assets/get-assets', { name: this.state.equipValue }, { token: false });
         }
-        return RestReq.asyncGet(this.queryEquipsCB, '/fw-bend-server/assets/get-assets', { /*offset: startSet, count: pageSize*/ }, { token: false });
+        return RestReq.asyncGet(this.queryEquipsCB, '/embed-terminal/assets/get-assets', { /*offset: startSet, count: pageSize*/ }, { token: false });
     }
 
     queryEquipsCB = (data) => {
@@ -201,7 +201,7 @@ class EquipAuthorizationView extends React.Component {
             message.info("请选择一条记录进行授权");
             return;
         }
-        RestReq.asyncGet(this.handleAuthorizationCB, '/fw-bend-server/authenticate/to-authorizate', { asset_uuid: selectedEquipRowKeys[0], empower_flag: 1 }, { token: false });
+        RestReq.asyncGet(this.handleAuthorizationCB, '/embed-terminal/authenticate/to-authorizate', { asset_uuid: selectedEquipRowKeys[0], empower_flag: 1 }, { token: false });
     };
 
     getWhiteEquipTableProps() {

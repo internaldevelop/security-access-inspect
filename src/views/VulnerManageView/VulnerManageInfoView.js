@@ -165,7 +165,7 @@ class VulnerManageInfoView extends React.Component {
         } else if (queryType === 2) {
             this.exactSearch();
         } else {
-            RestReq.asyncGet(this.getResultsCB, '/fw-bend-server/vuldb/search',  { page_num: currentPage, page_size: pageSize });// offset: startSet, count: pageSize * currentPage
+            RestReq.asyncGet(this.getResultsCB, '/embed-terminal/vuldb/search',  { page_num: currentPage, page_size: pageSize });// offset: startSet, count: pageSize * currentPage
         }
     }
 

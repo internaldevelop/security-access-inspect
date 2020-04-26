@@ -47,7 +47,8 @@ export function LoadEnvironConfig() {
         "agentServerPort": "8191",
         "edbServerPort": "10091",
         "mainServerUrl": "192.168.182.88",
-        "edbServerUrl": "192.168.182.88"
+        "edbServerUrl": "192.168.182.88",
+        // "appPath": "embed-terminal"
     };
 
     // 读取环境参数配置文件
@@ -84,6 +85,7 @@ export function GetMainServerRootUrl() {
     let protocol = _getHttpProtocol();
     let url = global.myEnvironConfig.mainServerUrl;
     let port = global.myEnvironConfig.mainServerPort;
+    let appPath = global.myEnvironConfig.appPath;
     return protocol + '://' + url + ':' + port;
 }
 

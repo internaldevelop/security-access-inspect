@@ -15,9 +15,12 @@
     "edbServerPort": "10112",
     "mainServerUrl": "localhost",
     "edbServerUrl": "localhost",
+    "appPath": "embed-terminal",
     "urlDescSplitter": "===================================================",
     "urlDesc1": "本地： localhost",
     "urlDesc2": "信通所云服务器： 172.16.60.5",
     "portDescSplitter": "===================================================",
-    "portDesc": "ssl: 12001, 12002, 12003; no-ssl: 8090, 8191, 10091"
+    "portDesc": "ssl: 12001, 12002, 12003; no-ssl: 8090, 8191, 10091",
+    "otherDescSplitter": "===================================================",
+    "appPathDesc": "ssl: 12001, 12002, 12003; no-ssl: 8090, 8191, 10091"
 }
