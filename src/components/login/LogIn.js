@@ -26,9 +26,9 @@ const styles = theme => ({
     main: {
         width: 'auto',
         display: 'block', // Fix IE 11 issue.
-        marginLeft: theme.spacing.unit * 3,
-        marginRight: theme.spacing.unit * 3,
-        [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+        marginLeft: theme.spacing(3),
+        marginRight: theme.spacing(3),
+        [theme.breakpoints.up(400 + theme.spacing(3*2))]: {
             width: 400,
             marginLeft: 'auto',
             marginRight: 'auto',
@@ -56,7 +56,7 @@ const styles = theme => ({
         backgroundSize: '100% 100%',
         flexDirection: 'column',
         alignItems: 'center',
-        padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+        padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(3)}px`,
         // backgroundColor: 'rgba(178,178,178,0.5)',
         // background: 'rgba(178,178,178,0.5)',
         backgroundImage: 'url(' + LoginBGImage + ')',
@@ -64,28 +64,28 @@ const styles = theme => ({
 
     paper: {
         width: 400,
-        marginTop: theme.spacing.unit * 8,
+        marginTop: theme.spacing(8),
         marginLeft: 'auto',
         marginRight: 'auto',
         // position: 'fixed',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+        padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(3)}px`,
         // backgroundColor: 'rgba(178,178,178,0.5)',
         // background: 'rgba(178,178,178,0.5)',
     },
     avatar: {
-        margin: theme.spacing.unit,
+        margin: theme.spacing(1),
         backgroundColor: theme.palette.secondary.main,
     },
     form: {
         width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing.unit,
+        marginTop: theme.spacing(1),
         // backgroundColor: 'rgba(178,178,178,0.5)',
     },
     submit: {
-        marginTop: theme.spacing.unit * 2,
+        marginTop: theme.spacing(2),
     },
 });
 

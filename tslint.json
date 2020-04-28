@@ -5,6 +5,7 @@
     "tslint-config-prettier"
   ],
   "rules": {
+    "no-unused-vars": false,
     "no-var-requires": false,
     "no-submodule-imports": false,
     "object-literal-sort-keys": false,

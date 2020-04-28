@@ -19,7 +19,7 @@ const { Text } = Typography;
 
 const styles = theme => ({
     root: {
-        marginTop: theme.spacing.unit,
+        marginTop: theme.spacing(1),
         flexWrap: 'wrap',
         flex: 1,
         alignItems: 'center',

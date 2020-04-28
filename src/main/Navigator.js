@@ -4,6 +4,11 @@ import { GetSystemType } from "../global/environment"
 
 const hostMenus = [
     {
+        title: '资产扫描',
+        icon: 'control',
+        key: '/home/assets-scan',
+    },
+    {
         title: '设备授权',
         icon: 'control',
         key: '/home/equip-authorization',
@@ -18,11 +23,11 @@ const hostMenus = [
         icon: 'line-chart',
         key: '/home/history-performance',
     },
-    {
-        title: '流量监测与审计',
-        icon: 'line-chart',
-        key: '/home/history-performance',
-    },
+    // {
+    //     title: '流量监测与审计',
+    //     icon: 'line-chart',
+    //     key: '/home/history-performance',
+    // },
     {
         title: '指纹管理',
         icon: 'safety-certificate',

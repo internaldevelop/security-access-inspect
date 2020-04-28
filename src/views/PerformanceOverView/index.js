@@ -278,7 +278,7 @@ class PerformanceOverView extends React.Component {
         const userStore = this.props.userStore;
         return (
             <div>
-                <Skeleton loading={!userStore.isNormalUser} active avatar>
+                {/* <Skeleton loading={!userStore.isNormalUser} active avatar> */}
                 {/* <Spin spinning={this.state.loading} size="large"> */}
                     <Card title="实时监控" /*extra={this.getAssetSelectList()}*/ bodyStyle={{ minWidth: '800px', minHeight: '400px' }}>
                         {/* <Skeleton loading={!assetOnline} active avatar> */}
@@ -334,7 +334,7 @@ class PerformanceOverView extends React.Component {
                         {/* </Skeleton> */}
                     </Card>
                 {/* </Spin> */}
-                </Skeleton>
+                {/* </Skeleton> */}
             </div>
         );
     }

@@ -299,7 +299,7 @@ class EquipAuthorizationView extends React.Component {
         const userStore = this.props.userStore;
         const { classes } = this.props;
         return (
-            <Skeleton loading={!userStore.isNormalUser} active avatar paragraph={{ rows: 12 }}>
+            // <Skeleton loading={!userStore.isNormalUser} active avatar paragraph={{ rows: 12 }}>
                 <div style={{ minWidth: GetMainViewMinWidth(), minHeight: GetMainViewMinHeight() }}>
                     <Row>
                         {/* <Col span={4}><Typography variant="h6">设备列表</Typography></Col> */}
@@ -323,7 +323,7 @@ class EquipAuthorizationView extends React.Component {
                     </Row>
                 </div>
 
-            </Skeleton>
+            // </Skeleton>
         );
     }
 }

@@ -37,7 +37,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    global.myEventEmitter = new EventEmitter();
+    // global.myEventEmitter = new EventEmitter();
   }
 
   render() {

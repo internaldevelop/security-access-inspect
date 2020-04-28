@@ -8,7 +8,6 @@ import SystemLogsView from '../views/SystemLogsView'
 import UsersManageView from '../views/UsersManageView'
 import UserInfoView from '../views/UsersManageView/UserInfoView'
 import AboutView from '../views/AboutView'
-import AssetManageView from '../views/AssetManageView';
 import FirmwareFetchView from '../views/FirmwareFetchView';
 import CertFileGenerate from '../views/CertFileGenerate';
 import CertFileImport from '../views/CertFileImport';
@@ -22,6 +21,7 @@ import DataRestoreView from '../views/DataRestoreView';
 import EquipAuthorizationView from '../views/EquipAuthorizationView';
 import AccessAuthenticationView from '../views/AccessAuthenticationView';
 import FingerprintManagementView from '../views/FingerprintManagementView';
+import AssetsScanView from '../views/AssetsScanView';
 
 @withRouter
 class ContentMain extends React.Component {
@@ -36,6 +36,7 @@ class ContentMain extends React.Component {
   getHostSystemRoute() {
     return (
       <Switch>
+        <PrivateRoute exact path='/home/assets-scan' component={AssetsScanView} />
         <PrivateRoute exact path='/home/equip-authorization' component={EquipAuthorizationView} />
         <PrivateRoute exact path='/home/access-authentication' component={AccessAuthenticationView} />
         <PrivateRoute exact path='/home/fingerprint-management' component={FingerprintManagementView} />
@@ -45,7 +46,6 @@ class ContentMain extends React.Component {
 
         <PrivateRoute exact path='/home/sysadmin/users' component={UsersManageView} />
         <PrivateRoute exact path='/home/sysadmin/personal' component={UserInfoView} />
-        <PrivateRoute exact path='/home/sysadmin/assets' component={AssetManageView} />
 
         <PrivateRoute exact path='/home/firmware-analyze/firmware-fetch' component={FirmwareFetchView} />
         <PrivateRoute exact path='/home/firmware-analyze/package-fetch' component={FirmwarePackageView} />

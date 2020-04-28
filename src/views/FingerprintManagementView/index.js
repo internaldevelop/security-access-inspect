@@ -160,7 +160,7 @@ class FingerprintManagementView extends React.Component {
         const { classes } = this.props;
         let self = this;
         return (
-            <Skeleton loading={!userStore.isNormalUser} active avatar>
+            // <Skeleton loading={!userStore.isNormalUser} active avatar>
                 <div style={{ minWidth: GetMainViewMinWidth(), minHeight: GetMainViewMinHeight() }}>
                     <Row style={{ marginTop: '10px' }}>
                         <Col span={2} align="left" style={{ marginTop: '5px' }}>
@@ -219,7 +219,7 @@ class FingerprintManagementView extends React.Component {
                     </Card>
                 </div>
 
-            </Skeleton>
+            // </Skeleton>
         );
     }
 }

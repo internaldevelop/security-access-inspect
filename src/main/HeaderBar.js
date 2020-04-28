@@ -30,7 +30,7 @@ const styles = theme => ({
   //   width: '200px',
   // },
   menuButton: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
   },
   greenAvatar: {
     margin: 10,

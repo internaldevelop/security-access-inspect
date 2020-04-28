@@ -4,7 +4,7 @@ import ArrUtils from '../utils/ArrUtils';
 import StrUtils from '../utils/StrUtils';
 import TimeUtils from '../utils/TimeUtils';
 import qs from 'qs';
-
+import { GetMainServerRootUrl, GetEdbServerRootUrl } from '../global/environment'
 
 /**
  * New version of RESTful interface calling,
@@ -134,8 +134,8 @@ class RestReq {
         // 设定 REST 接口的 BaseUrl
         if (baseUrlType.length === 0) {
             // 默认的 BaseUrl
-            // baseUrl = GetMainServerRootUrl();
-            baseUrl = 'http://localhost:10110';
+            baseUrl = GetMainServerRootUrl();
+            // baseUrl = 'http://localhost:10110';
         }
 
         return baseUrl;

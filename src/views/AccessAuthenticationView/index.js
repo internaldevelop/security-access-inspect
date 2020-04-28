@@ -190,7 +190,7 @@ class AccessAuthenticationView extends React.Component {
         const { classes } = this.props;
         let self = this;
         return (
-            <Skeleton loading={!userStore.isNormalUser} active avatar>
+            // <Skeleton loading={!userStore.isNormalUser} active avatar>
                 <div style={{ minWidth: GetMainViewMinWidth(), minHeight: GetMainViewMinHeight() }}>
                     <Card title={'授权列表'}>
                         <Table
@@ -221,7 +221,7 @@ class AccessAuthenticationView extends React.Component {
                     </Card> */}
                 </div>
 
-            </Skeleton>
+            // </Skeleton>
         );
     }
 }

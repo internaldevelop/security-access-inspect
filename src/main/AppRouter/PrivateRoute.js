@@ -24,12 +24,23 @@ class PrivateRoute extends React.Component {
     }
 
     checkIfLogin = () => {
+        // 调试用
         const userStore = this.props.userStore;
-        const isUserLogin = this.state;
-        if (!isUserLogin || !userStore.loginUser.isLogin) {
-            userStore.initLoginUser();
-            RestReq.asyncGet(this.verifyPasswordCB, '/unified-auth/oauth/token', { grant_type: 'password', username: userStore.loginUser.name, password: userStore.loginUser.password }, { alwaysCallBack: true, clientAuth: true, token: false });
-        }
+        userStore.setLoginUser({
+            isLogin: true,
+            name: 'user_1',
+            uuid: '112233',
+            password: '123',
+            email: '21131',
+        });
+        this.setState({ isUserLogin: true });
+        return;
+        // const userStore = this.props.userStore;
+        // const isUserLogin = this.state;
+        // if (!isUserLogin || !userStore.loginUser.isLogin) {
+        //     userStore.initLoginUser();
+        //     RestReq.asyncGet(this.verifyPasswordCB, '/unified-auth/oauth/token', { grant_type: 'password', username: userStore.loginUser.name, password: userStore.loginUser.password }, { alwaysCallBack: true, clientAuth: true, token: false });
+        // }
     }
 
     verifyPasswordCB = (data) => {
