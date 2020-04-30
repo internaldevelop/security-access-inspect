@@ -1,12 +1,16 @@
 import React from 'react'
 import { Card, InputNumber, Form, DatePicker, Switch, Input, Col, Tabs, Popconfirm } from 'antd'
 import { getCardHeaderStyle } from '../../utils/CardUtils';
+import { renderAssetInfo } from './AssetInfo';
+
+const { TextArea } = Input;
 
 export default class FingerPrintInfoForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             showConfig: false,
+            assetInfo: {},
         }
     }
 
@@ -16,9 +20,12 @@ export default class FingerPrintInfoForm extends React.Component {
     }
 
     render() {
+        const { assetInfo } = this.state;
         return (<Card title={'设备指纹'} headStyle={getCardHeaderStyle('info')}
             extra={this.getExtra()}
             style={{ height: '100%', margin: 8 }}>
+                <TextArea prefix="￥" autoSize={{ minRows: 2, maxRows: 10 }} />
+                {renderAssetInfo(assetInfo)}
             <Form
                 labelCol={{ span: 6 }}
                 wrapperCol={{ span: 18 }}

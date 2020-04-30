@@ -122,7 +122,7 @@ function _initOptions(options) {
     }
 }
 
-function _addEdges(options, edgesNameList, assetClass, assetStatus) {
+function _addSimulateAssets(options, edgesNameList, assetClass, assetStatus) {
     let seriesData = options.series[0].data;
     let seriesLinks = options.series[0].links;
 
@@ -130,7 +130,7 @@ function _addEdges(options, edgesNameList, assetClass, assetStatus) {
 
     for (let index in edgesNameList) {
         let edgeName = edgesNameList[index];
-        let totalCount = seriesData.push({ name: edgeName, category: category, value: '1000' + index });
+        let totalCount = seriesData.push({ name: edgeName, category: category, value: '' + 100 * category + index });
         seriesLinks.push({
             source: 0,
             target: totalCount - 1,
@@ -191,15 +191,47 @@ export function getSimulateOptions(assetClass, assetStatus) {
     // }
 
 
-    _addEdges(options, ['水电终端-41', '水电终端-42', '火电终端-43',], AssetClass.NOT_ASSIGN, AssetStatus.OFF_LINE);
-    _addEdges(options, ['水电终端-51', '水电终端-52', '火电终端-53',], AssetClass.NOT_ASSIGN, AssetStatus.ON_LINE);
-    _addEdges(options, ['配电终端-1', '变电终端-1', '变电终端-2', '变电终端-3', '变电终端-4', '风电终端-1', '风电终端-2',], AssetClass.WHITE_LIST, AssetStatus.OFF_LINE);
-    _addEdges(options, ['火电终端-1', '火电终端-2', '水电终端-2', '水电终端-3',], AssetClass.WHITE_LIST, AssetStatus.ON_LINE);
-    _addEdges(options, ['水电终端-11', '水电终端-12', '火电终端-21',], AssetClass.BLACK_LIST, AssetStatus.OFF_LINE);
-    _addEdges(options, ['水电终端-31', '水电终端-32', '火电终端-33',], AssetClass.BLACK_LIST, AssetStatus.ON_LINE);
+    _addSimulateAssets(options, ['水电终端-41', '水电终端-42', '火电终端-43',], AssetClass.NOT_ASSIGN, AssetStatus.OFF_LINE);
+    _addSimulateAssets(options, ['水电终端-51', '水电终端-52', '火电终端-53',], AssetClass.NOT_ASSIGN, AssetStatus.ON_LINE);
+    _addSimulateAssets(options, ['配电终端-1', '变电终端-1', '变电终端-2', '变电终端-3', '变电终端-4', '风电终端-1', '风电终端-2',], AssetClass.WHITE_LIST, AssetStatus.OFF_LINE);
+    _addSimulateAssets(options, ['火电终端-1', '火电终端-2', '水电终端-2', '水电终端-3',], AssetClass.WHITE_LIST, AssetStatus.ON_LINE);
+    _addSimulateAssets(options, ['水电终端-11', '水电终端-12', '火电终端-21',], AssetClass.BLACK_LIST, AssetStatus.OFF_LINE);
+    _addSimulateAssets(options, ['水电终端-31', '水电终端-32', '火电终端-33',], AssetClass.BLACK_LIST, AssetStatus.ON_LINE);
 
     return options;
 
+}
+
+function _addAsset(options, asset) {
+    let seriesData = options.series[0].data;
+    let seriesLinks = options.series[0].links;
+
+    // empower_flag: 0/1/2，对应黑白名单等
+    let assetClass = asset.empower_flag;
+
+    // TODO: 接口未返回，暂时设定为在线
+    let assetStatus = AssetStatus.ON_LINE;
+
+    let category = getCateIndex(assetClass, assetStatus);
+
+    // graph 中添加 edge
+    let totalCount = seriesData.push({ name: asset.name, category: category, value: asset.uuid });
+    // graph 中添加 path
+    seriesLinks.push({
+        source: 0,
+        target: totalCount - 1,
+        category: category,
+        value: ''
+    });
+}
+
+
+export function getGraphOptions(assetsList, assetClass, assetStatus) {
+    getSimulateOptions(assetClass, assetStatus);
+    for (let asset of assetsList) {
+        _addAsset(options, asset);
+    }
+    return options;
 }
 
 // export default {

@@ -69,7 +69,7 @@ class RestReq {
         };
 
         // 需要验证权限的加上 access_token 参数
-        if (config.token) {
+        if (config.hasOwnProperty('token') && config.token) {
             params.access_token = this._getAccessToken();
         }
 

@@ -1,17 +1,12 @@
 import React from 'react'
-import { withStyles } from '@material-ui/core/styles';
 import ReactEcharts from 'echarts-for-react';
 import { Card, Select, Icon, Button, Col, Tabs, Popconfirm } from 'antd'
-import { getSimulateOptions } from './options';
+import { getSimulateOptions, getGraphOptions } from './options';
 import { getCardHeaderStyle } from '../../utils/CardUtils';
 import { AssetClass, AssetStatus, getAssetClass, getCateIndex, getCateIndexByClass, getCateIndexByStatus } from '../../modules/assetForm/AssetStatus'
 import { MyRegisterEvent, MyUnregisterEvent, MySendEvent } from '../../global/environment/MySysEvent';
-
-const styles = theme => ({
-    root: {
-        width: '90%',
-    },
-});
+import RestReq from '../../utils/RestReq';
+import { DeepClone } from '../../utils/ObjUtils';
 
 const { Option } = Select;
 
@@ -21,16 +16,35 @@ export default class AssetsGraph extends React.Component {
         this.state = {
             // selectClass: 2,
             // selectStatus: null,
+            assetBasicInfos: [],
+            assetDetailInfos: [],
         }
 
         this.selectClass = null;
         this.selectStatus = null;
         this.echartsReact = React.createRef();
-        // 设置操作列的渲染
-        // this.initActionColumn();
 
         // 从后台获取设备数据的集合
-        // this.getAllAssets();
+        this.getAllAssets();
+
+        this.onClickScanAssets = this.onClickScanAssets.bind(this);
+    }
+
+    queryBasicInfosCB = (data) => {
+        let assetsArr = data.payload.data;
+        let assetBasicInfos = assetsArr.map((asset, index) => {
+            let basicInfo = DeepClone(asset);
+            return basicInfo;
+        })
+        this.setState({ assetBasicInfos });
+    }
+
+    queryDetailInfosCB = (data) => {
+    }
+
+    getAllAssets() {
+        RestReq.asyncGet(this.queryBasicInfosCB, '/embed-terminal/assets/get-assets', {}, { token: false });
+        // RestReq.asyncGet(this.queryDetailInfosCB, '/embed-terminal/assets/get-assets-details');
     }
 
     handleAssetClassChange = (value) => {
@@ -46,6 +60,8 @@ export default class AssetsGraph extends React.Component {
     }
 
     handleAssetStatusChange = (value) => {
+        const { assetBasicInfos } = this.state;
+
         console.log(`selected ${value}`);
         if (value === "online") { value = AssetStatus.ON_LINE; }
         else if (value === "offline") { value = AssetStatus.OFF_LINE; }
@@ -53,7 +69,11 @@ export default class AssetsGraph extends React.Component {
         this.selectStatus = value;
 
         // 刷新
-        this.echartsReact.getEchartsInstance().setOption(getSimulateOptions(this.selectClass, this.selectStatus));
+        this.echartsReact.getEchartsInstance().setOption(getGraphOptions(assetBasicInfos, this.selectClass, this.selectStatus));
+    }
+
+    onClickScanAssets() {
+        this.getAllAssets();
     }
 
     getExtra() {
@@ -69,7 +89,7 @@ export default class AssetsGraph extends React.Component {
                 <Option value="online">在线</Option>
                 <Option value="offline">离线</Option>
             </Select>
-            <Button style={{ backgroundColor: '#fff7e6', color: '#610b00' }}>重新扫描</Button>
+            <Button style={{ backgroundColor: '#fff7e6', color: '#610b00' }} onClick={this.onClickScanAssets}>重新扫描</Button>
             {/* <Button style={{ backgroundColor: '#ff4d4f', color: 'white' }}>重新扫描</Button> */}
             {/* <Button type="primary" htmlType="submit">重新扫描</Button> */}
         </div>);
@@ -83,25 +103,56 @@ export default class AssetsGraph extends React.Component {
         console.log('ReactEcharts graph onChartout');
     }
 
+    findAssetInfo(uuid) {
+        const { assetBasicInfos, assetDetailInfos } = this.state;
+        let basicInfo = {};
+        for (let item of assetBasicInfos) {
+            if (item.uuid === uuid) {
+                basicInfo = item;
+            }
+        }
+        let detailInfo = {};
+        for (let item of assetDetailInfos) {
+            if (item.uuid === uuid) {
+                detailInfo = item;
+            }
+        }
+        return {basicInfo, detailInfo};
+    }
+
     onClick(event) {
         console.log('ReactEcharts graph onClick');
         console.log(event);
-        event.data['assetClass'] = getAssetClass(event.data.category);
-        MySendEvent('my_select_asset', event.data);
+        // echarts 中，错误地把 path(links) 当做 edge，links 的 dataType 是 'edge'
+        if (event.dataType === 'node') {
+            // event.data['assetClass'] = getAssetClass(event.data.category);
+            // MySendEvent('my_select_asset_basic_info', event.data);
+
+            let assetInfo = this.findAssetInfo(event.data.value);
+            if (assetInfo.basicInfo.hasOwnProperty('uuid')) {
+                MySendEvent('my_select_asset_basic_info', assetInfo.basicInfo);
+                MySendEvent('my_select_asset_detail_info', assetInfo.detailInfo);
+            } else {
+                // 发送虚拟设备
+                let basicInfo = {uuid: event.data.value, name: event.data.name, empower_flag: getAssetClass(event.data.category)};
+                MySendEvent('my_select_asset_basic_info', basicInfo);
+            }
+        }
     }
 
     render() {
+        const { assetBasicInfos } = this.state;
         const onEvents = {
             // 'mouseover': this.onChartover.bind(this),
             // 'mouseout': this.onChartout.bind(this),
             'click': this.onClick.bind(this),
-        }  
+        }
 
         return (<Card title={'终端一览（review）'} headStyle={getCardHeaderStyle('main')}
             extra={this.getExtra()}
             style={{ height: '100%', margin: 8 }}>
-            <ReactEcharts option={getSimulateOptions(null, null)} style={{ width: '100%', height: 600 }}
-                ref={(e) => { this.echartsReact = e }} onEvents={onEvents}/>
+            <ReactEcharts option={getGraphOptions(assetBasicInfos, null, null)} style={{ width: '100%', height: 600 }}
+                ref={(e) => { this.echartsReact = e }} onEvents={onEvents} />
         </Card>);
     }
 }
