@@ -1,5 +1,6 @@
 import { AssetClass, AssetStatus, getAssetCategories, getCateIndex, getCateIndexByClass, getCateIndexByStatus } from '../../modules/assetForm/AssetStatus'
 import ArrUtils from '../../utils/ArrUtils'
+import SimAssets from '../../modules/simdata/SimAssets'
 
 var options = {
     title: {
@@ -122,7 +123,26 @@ function _initOptions(options) {
     }
 }
 
-function _addSimulateAssets(options, edgesNameList, assetClass, assetStatus) {
+function _addSimulateAssets(options) {
+    let seriesData = options.series[0].data;
+    let seriesLinks = options.series[0].links;
+    let assetsList = SimAssets.allAssets();
+
+    for (let index in assetsList) {
+        let asset = assetsList[index];
+        let category = getCateIndex(asset.cls, asset.status);
+
+        let totalCount = seriesData.push({ name: asset.name, category: category, value: '' + 100 * category + index });
+        seriesLinks.push({
+            source: 0,
+            target: totalCount - 1,
+            category: category,
+            value: ''
+        });
+    }
+}
+
+function _addSimulateAssets2(options, edgesNameList, assetClass, assetStatus) {
     let seriesData = options.series[0].data;
     let seriesLinks = options.series[0].links;
 
@@ -191,12 +211,13 @@ export function getSimulateOptions(assetClass, assetStatus) {
     // }
 
 
-    _addSimulateAssets(options, ['水电终端-41', '水电终端-42', '火电终端-43',], AssetClass.NOT_ASSIGN, AssetStatus.OFF_LINE);
-    _addSimulateAssets(options, ['水电终端-51', '水电终端-52', '火电终端-53',], AssetClass.NOT_ASSIGN, AssetStatus.ON_LINE);
-    _addSimulateAssets(options, ['配电终端-1', '变电终端-1', '变电终端-2', '变电终端-3', '变电终端-4', '风电终端-1', '风电终端-2',], AssetClass.WHITE_LIST, AssetStatus.OFF_LINE);
-    _addSimulateAssets(options, ['火电终端-1', '火电终端-2', '水电终端-2', '水电终端-3',], AssetClass.WHITE_LIST, AssetStatus.ON_LINE);
-    _addSimulateAssets(options, ['水电终端-11', '水电终端-12', '火电终端-21',], AssetClass.BLACK_LIST, AssetStatus.OFF_LINE);
-    _addSimulateAssets(options, ['水电终端-31', '水电终端-32', '火电终端-33',], AssetClass.BLACK_LIST, AssetStatus.ON_LINE);
+    _addSimulateAssets(options);
+    // _addSimulateAssets(options, ['水电终端-41', '水电终端-42', '火电终端-43',], AssetClass.NOT_ASSIGN, AssetStatus.OFF_LINE);
+    // _addSimulateAssets(options, ['水电终端-51', '水电终端-52', '火电终端-53',], AssetClass.NOT_ASSIGN, AssetStatus.ON_LINE);
+    // _addSimulateAssets(options, ['配电终端-1', '变电终端-1', '变电终端-2', '变电终端-3', '变电终端-4', '风电终端-1', '风电终端-2',], AssetClass.WHITE_LIST, AssetStatus.OFF_LINE);
+    // _addSimulateAssets(options, ['火电终端-1', '火电终端-2', '水电终端-2', '水电终端-3',], AssetClass.WHITE_LIST, AssetStatus.ON_LINE);
+    // _addSimulateAssets(options, ['水电终端-11', '水电终端-12', '火电终端-21',], AssetClass.BLACK_LIST, AssetStatus.OFF_LINE);
+    // _addSimulateAssets(options, ['水电终端-31', '水电终端-32', '火电终端-33',], AssetClass.BLACK_LIST, AssetStatus.ON_LINE);
 
     return options;
 

@@ -1,32 +1,13 @@
 import React from 'react'
-import PropTypes from 'prop-types';
-import { Skeleton, Table, Icon, Button, Row, Col, Tabs, Popconfirm } from 'antd'
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import { Skeleton, Table, Button, Row, Col, Tabs, Popconfirm } from 'antd'
 import { observer, inject } from 'mobx-react'
-import { actionType } from '../../global/enumeration/ActionType';
-import { DeepClone, DeepCopy } from '../../utils/ObjUtils'
-import { GetMainViewHeight } from '../../utils/PageUtils'
-import HttpRequest from '../../utils/HttpRequest';
 import AssetsGraph from './AssetsGraph';
 import AssetInfoForm from '../../modules/assetForm/AssetInfoForm';
 import AssetReviewForm from '../../modules/assetForm/AssetReviewForm';
 import FingerPrintInfoForm from '../../modules/assetForm/FingerPrintInfoForm';
-import ReactEcharts from 'echarts-for-react';
 import { getSimulateOptions } from './options';
+import { GetMainViewHeight, GetMainViewMinHeight, GetMainViewMinWidth } from '../../utils/PageUtils';
 
-const TabPane = Tabs.TabPane;
-
-
-const styles = theme => ({
-    iconButton: {
-        margin: 0,
-        marginBottom: 0,
-        marginTop: 0,
-    },
-});
-
-const DEFAULT_PAGE_SIZE = 10;
 @inject('assetStore')
 @inject('userStore')
 @observer
@@ -71,9 +52,7 @@ class AssetsScanView extends React.Component {
     render() {
         const { columns, showConfig, assets, scrollWidth, scrollHeight } = this.state;
         let self = this;
-        const userStore = this.props.userStore;
-        return (<div>
-            {/* <Skeleton loading={!userStore.isNormalUser} active avatar> */}
+        return (<div style={{ minWidth: GetMainViewMinWidth(), minHeight: GetMainViewMinHeight() }}>
             <Row>
                 <Col span={12}>
                     {/* <div>23213213</div> */}
@@ -94,17 +73,9 @@ class AssetsScanView extends React.Component {
                     </Row>
                 </Col>
             </Row>
-            {/* <Skeleton loading={!userStore.isNormalUser} active avatar paragraph={{ rows: 24 }}> */}
-
-            {/* <Skeleton loading={!userStore.isNormalUser} active avatar> */}
-            {/* </Skeleton> */}
         </div>)
 
     }
 }
 
-AssetsScanView.propTypes = {
-    classes: PropTypes.object,
-};
-
-export default withStyles(styles)(AssetsScanView);
+export default AssetsScanView;
