@@ -6,6 +6,7 @@ import AssetBasicInfo from '../../modules/assetForm/AssetBasicInfo';
 import AuthDetails from '../../modules/assetForm/AuthDetails';
 import MAntdCard from '../../rlib/props/MAntdCard';
 import authResultTag from '../../modules/antdComponents/AuthResultTag';
+import MTimeUtils from '../../rlib/utils/MTimeUtils';
 
 class AuthRecordInfo extends React.Component {
     constructor(props) {
@@ -15,6 +16,22 @@ class AuthRecordInfo extends React.Component {
             authRecord: { auth_result: 0 },
         }
 
+        // let tms1 = MTimeUtils.now();
+        // let tms2 = MTimeUtils.now('str', 'simple');
+        // let tms3 = MTimeUtils.now('str', 'yyyy-MM-dd hh:mm:ss.S');
+        // let tms4 = MTimeUtils.now('str', 'locale');
+        // let tms5 = MTimeUtils.now('str', 'localetime');
+        // let tms6 = MTimeUtils.now('str', 'normal');
+        // let tms7 = MTimeUtils.now('str', 'GMT');
+
+        // let tms0 = MTimeUtils.now();
+        // let tms1 = MTimeUtils.offset(-39, 'second');
+        // let tms2 = MTimeUtils.offset(-39, 'minute');
+        // let tms3 = MTimeUtils.offset(-9, 'hour');
+        // let tms4 = MTimeUtils.offset(-9, 'day');
+        // let tms5 = MTimeUtils.offset(-9, 'month');
+        // let tms6 = MTimeUtils.offset(-9, 'year');
+        // let i=1;
     }
 
     componentDidMount() {
