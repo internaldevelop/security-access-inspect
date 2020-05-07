@@ -2,7 +2,7 @@ import React from 'react'
 import ReactEcharts from 'echarts-for-react';
 import { Card, Select, Icon, Button, Col, Tabs, Popconfirm } from 'antd'
 import { getSimulateOptions, getGraphOptions } from './options';
-import { getCardHeaderStyle } from '../../utils/CardUtils';
+import MAntdCard from '../../rlib/props/MAntdCard';
 import { AssetClass, AssetStatus, getAssetClass, getCateIndex, getCateIndexByClass, getCateIndexByStatus } from '../../modules/assetForm/AssetStatus'
 import { MyRegisterEvent, MyUnregisterEvent, MySendEvent } from '../../global/environment/MySysEvent';
 import RestReq from '../../utils/RestReq';
@@ -148,7 +148,7 @@ export default class AssetsGraph extends React.Component {
             'click': this.onClick.bind(this),
         }
 
-        return (<Card title={'终端一览（review）'} headStyle={getCardHeaderStyle('main')}
+        return (<Card title={'终端一览（review）'} headStyle={MAntdCard.headerStyle('main')}
             extra={this.getExtra()}
             style={{ height: '100%', margin: 8 }}>
             <ReactEcharts option={getGraphOptions(assetBasicInfos, null, null)} style={{ width: '100%', height: 600 }}

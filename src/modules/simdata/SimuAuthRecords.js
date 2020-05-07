@@ -3,7 +3,7 @@ import { DeepClone } from '../../utils/ObjUtils';
 
 var _authResultsList = [
     // auth_result: 0--未知，1--成功，2--验签失败，3--解密失败，4--过期
-    {name: '水电终端-31', ip: '192.168.1.100', auth_result: 1, auth_time: '2020-04-21 10:57:16'},
+    {name: '水电终端-31水电终端-31水电终端-31水电终端-31', ip: '192.168.1.100', auth_result: 1, auth_time: '2020-04-21 10:57:16'},
     {name: '水电终端-32', ip: '192.168.1.101', auth_result: 1, auth_time: '2020-04-21 10:57:16'},
     {name: '水电终端-33', ip: '192.168.1.102', auth_result: 2, auth_time: '2020-04-21 10:57:16'},
     {name: '水电终端-34', ip: '192.168.1.103', auth_result: 3, auth_time: '2020-04-21 10:57:16'},

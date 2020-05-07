@@ -1,7 +1,7 @@
 import MStrUtils from '../utils/MStrUtils';
 
 
-class MCardProps {
+class MAntdCard {
 
     /**
      * 返回指定的卡片头部风格的字典对象
@@ -26,4 +26,4 @@ class MCardProps {
     
 }
 
-export default new MCardProps();
+export default new MAntdCard();

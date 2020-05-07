@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, Radio, Form, Button, Switch, Input, Col, Tabs, Popconfirm } from 'antd'
-import { getCardHeaderStyle } from '../../utils/CardUtils';
+import MAntdCard from '../../rlib/props/MAntdCard';
 import { MyRegisterEvent, MyUnregisterEvent } from '../../global/environment/MySysEvent';
 import { AssetClass, AssetStatus, getAssetClass, getCateIndex, getCateIndexByClass, getCateIndexByStatus } from '../../modules/assetForm/AssetStatus'
 
@@ -78,7 +78,7 @@ export default class AssetReviewForm extends React.Component {
     render() {
         const { assetName, assetClass } = this.state;
 
-        return (<Card title={'终端审核'} headStyle={getCardHeaderStyle('emphasis')}
+        return (<Card title={'终端审核'} headStyle={MAntdCard.headerStyle('emphasis')}
             extra={this.getExtra()}
             style={{ height: '100%', margin: 8 }}>
             <Form
