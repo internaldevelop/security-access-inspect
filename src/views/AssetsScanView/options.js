@@ -1,6 +1,6 @@
-import { AssetClass, AssetStatus, getAssetCategories, getCateIndex, getCateIndexByClass, getCateIndexByStatus } from '../../modules/assetForm/AssetStatus'
-import ArrUtils from '../../utils/ArrUtils'
-import SimAssets from '../../modules/simdata/SimAssets'
+import { AssetClass, AssetStatus, getAssetCategories, getCateIndex, getCateIndexByClass, getCateIndexByStatus } from '../../modules/assetForm/AssetStatus';
+import MArrayUtils from '../../rlib/utils/MArrayUtils';
+import SimAssets from '../../modules/simdata/SimAssets';
 
 var options = {
     title: {
@@ -166,8 +166,7 @@ function selectCats(options, catsList) {
     for (let index in categories) {
         index = parseInt(index)
         let category = categories[index];
-        // let is_in = ArrUtils.contains(catsList, index);
-        selected[category] = ArrUtils.contains(catsList, index);
+        selected[category] = MArrayUtils.contains(catsList, index);
     }
 }
 

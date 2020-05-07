@@ -1,8 +1,8 @@
 import { message } from 'antd'
 import axios from 'axios';
-import ArrUtils from '../utils/ArrUtils';
-import StrUtils from '../utils/StrUtils';
-import TimeUtils from '../utils/TimeUtils';
+import MArrayUtils from '../rlib/utils/MArrayUtils';
+import MTranslate from '../rlib/utils/MTranslate';
+import MTimeUtils from '../rlib/utils/MTimeUtils';
 import qs from 'qs';
 import { GetMainServerRootUrl, GetEdbServerRootUrl } from '../global/environment'
 
@@ -77,7 +77,7 @@ class RestReq {
             // post 方法时，参数传递给 data 域
             options.data = qs.stringify(params);
             options.headers = { 'content-type': 'application/x-www-form-urlencoded' };
-        } else if (ArrUtils.contains(['get', 'delete'], method)) {
+        } else if (MArrayUtils.contains(['get', 'delete'], method)) {
             // get / delete 方法时，参数传递给 params 域
             options.params = params;
         }
@@ -100,7 +100,7 @@ class RestReq {
             .catch(error => {
                 console.log('axios catch error:');
                 console.log(error);
-                message.error(StrUtils.eng2chn(error.message));
+                message.error(MTranslate.eng2chn(error.message));
             });
     }
 
@@ -198,18 +198,18 @@ class RestReq {
 
     testRestReq() {
         this._testNoAuthGet();
-        TimeUtils.sleep(1000)
+        MTimeUtils.sleep(1000)
             .then(() => { 
                 this._testAuthGet(); 
-                return TimeUtils.sleep(1000); 
+                return MTimeUtils.sleep(1000); 
             })
             .then(() => { 
                 this._testAuthPost(); 
-                return TimeUtils.sleep(1000); 
+                return MTimeUtils.sleep(1000); 
             })
             .then(() => { 
                 this._testAuthDelete(); 
-                return TimeUtils.sleep(1000); 
+                return MTimeUtils.sleep(1000); 
             });
 
     }
