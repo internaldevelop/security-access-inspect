@@ -18,7 +18,7 @@ export default class AssetBasicInfo extends React.Component {
     }
 
     componentWillUnmount() {
-        // 取消事件
+        // 注销事件
         MyUnregisterEvent('my_select_asset_basic_info', this.handleSelectAsset);
     }
 
@@ -40,14 +40,14 @@ export default class AssetBasicInfo extends React.Component {
             wrapperCol={{ span: 18 }}
             layout="horizontal"
         >
-            <Form.Item label="终端ID">
-                <Input value={basicInfo.id} />
+            <Form.Item label="终端名称">
+                <Input value={basicInfo.name} />
             </Form.Item>
             <Form.Item label="终端标识">
                 <Input value={basicInfo.uuid} />
             </Form.Item>
             <Form.Item label="分类">
-                <Input value={basicInfo.empower_flag} />
+                <Input value={basicInfo.classify} />
             </Form.Item>
             <Form.Item label="IP地址">
                 <Input value={basicInfo.ip} />

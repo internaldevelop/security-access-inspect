@@ -227,8 +227,8 @@ function _addAsset(options, asset) {
     let seriesData = options.series[0].data;
     let seriesLinks = options.series[0].links;
 
-    // empower_flag: 0/1/2，对应黑白名单等
-    let assetClass = asset.empower_flag;
+    // classify: 0/1/2，对应黑白名单等
+    let assetClass = asset.classify;
 
     // TODO: 接口未返回，暂时设定为在线
     let assetStatus = AssetStatus.ON_LINE;

@@ -134,7 +134,7 @@ export default class AssetsGraph extends React.Component {
                 MySendEvent('my_select_asset_detail_info', assetInfo.detailInfo);
             } else {
                 // 发送虚拟设备
-                let basicInfo = {uuid: event.data.value, name: event.data.name, empower_flag: getAssetClass(event.data.category)};
+                let basicInfo = {uuid: event.data.value, name: event.data.name, classify: getAssetClass(event.data.category)};
                 MySendEvent('my_select_asset_basic_info', basicInfo);
             }
         }

@@ -45,6 +45,15 @@ class SimAssets {
         });
     }
 
+    getAsset(assetUuid) {
+        let assetList = this.allAssets();
+        for (let asset of assetList) {
+            if (asset.uuid === assetUuid) {
+                return asset;
+            }
+        }
+        return {};
+    }
 
 }
 

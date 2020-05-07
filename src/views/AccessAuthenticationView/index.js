@@ -6,6 +6,7 @@ import { GetMainViewHeight, GetMainViewMinHeight, GetMainViewMinWidth } from '..
 import { columns as AccessLogColumn } from './AccessLogColumn';
 import { columns as Column } from './Column';
 import AssetAuthTable from './AssetAuthTable';
+import AuthRecordInfo from './AuthRecordInfo';
 import RestReq from '../../utils/RestReq';
 
 // export default 
@@ -29,7 +30,7 @@ class AccessAuthenticationView extends React.Component {
 
     queryAuthorizationEquips = (targetPage, pageSize) => {
         let startSet = (targetPage - 1) * pageSize + 1;
-        return RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/assets/get-assets', { empower_flag: 1, /*offset: startSet, count: pageSize*/ }, { token: false });
+        return RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/assets/get-assets', { classify: 1, /*offset: startSet, count: pageSize*/ }, { token: false });
     }
 
     queryAuthorizationEquipsCB = (data) => {
@@ -48,7 +49,7 @@ class AccessAuthenticationView extends React.Component {
                             <AssetAuthTable />
                     </Col>
                     <Col span={9}>
-
+                    <AuthRecordInfo />
                     </Col>
                     </Row>
                 </div>

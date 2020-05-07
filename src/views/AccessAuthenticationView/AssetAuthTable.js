@@ -1,19 +1,20 @@
-import { message, Row, Col, Input, Button, Select, Card, Tag, Table } from 'antd';
+import { Select, Card, Table } from 'antd';
 import { inject, observer } from 'mobx-react';
 import React from 'react';
-import { DeepClone } from '../../utils/ObjUtils';
-import { GetMainViewHeight, GetMainViewMinHeight, GetMainViewMinWidth } from '../../utils/PageUtils';
+import { GetMainViewMinHeight } from '../../utils/PageUtils';
 import { columns as AccessLogColumn } from './AccessLogColumn';
 import RestReq from '../../utils/RestReq';
 import SimAssets from '../../modules/simdata/SimAssets';
 import SimuAuthRecords from '../../modules/simdata/SimuAuthRecords';
 import withStyles from '@material-ui/core/styles/withStyles';
 // import styles from './authTable.less';
+import { MySendEvent } from '../../global/environment/MySysEvent';
+import { getCardHeaderStyle } from '../../utils/CardUtils';
 
 const DEFAULT_PAGE_SIZE = 10;
 const styles = theme => ({
     clickRow: {
-        backgroundColor: '#00b4ed',
+        backgroundColor: '#bae7ff',
     },
 });
 
@@ -55,25 +56,9 @@ class AssetAuthTable extends React.Component {
     handleResize = e => {
     }
 
-    /** 初始化操作列，定义渲染效果 */
-    initActionColumn() {
-        // const { columns } = this.state;
-        // const { classes } = this.props;
-        // if (columns.length === 0)
-        //     return;
-
-        // columns[columns.length - 1].render = (text, record, index) => (
-        //     <div>
-        //         <Button className={classes.actionButton} type="primary" size="small" onClick={this.handleAuthentication(index).bind(this)}>指纹认证</Button>
-        //     </div>
-        // )
-
-        // this.setState({ columns });
-    }
-
     queryAuthorizationEquips = (targetPage, pageSize) => {
         // let startSet = (targetPage - 1) * pageSize + 1;
-        // return RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/assets/get-assets', { empower_flag: 1, /*offset: startSet, count: pageSize*/ }, { token: false });
+        // return RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/assets/get-assets', { classify: 1, /*offset: startSet, count: pageSize*/ }, { token: false });
     }
 
     queryAuthorizationEquipsCB = (data) => {
@@ -137,42 +122,8 @@ class AssetAuthTable extends React.Component {
     handleAuthentication = (index) => (event) => {
         // const equips = this.state.equips;
 
-        // //RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/assets/get-assets', { empower_flag: 1, /*offset: startSet, count: pageSize*/ }, { token: false });
+        // //RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/assets/get-assets', { classify: 1, /*offset: startSet, count: pageSize*/ }, { token: false });
         // RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/authenticate/authenticate', { asset_uuid: equips[index].uuid, }, { token: false });
-    }
-
-    getExtraInput = () => {
-        // const { classes } = this.props;
-        // return (
-        //     <Input className={classes.antInput} size="large" onChange={this.handleEquipInputValue} placeholder="接入日志查询" onKeyPress={this.handleEquipInputKeyPressed} />
-        // );
-    }
-
-    getAccessLogTableProps() {
-        // const { totalResult, scrollWidth, scrollHeight, equips } = this.state;
-        // let self = this;
-
-        // const tableProps = {
-        //     columns: AccessLogColumn,
-        //     rowKey: record => record.uuid,
-        //     dataSource: equips,
-        //     scroll: { x: scrollWidth, y: scrollHeight },
-        //     bordered: true,
-        //     pagination: {
-        //         total: totalResult > 0 ? totalResult : 10,
-        //         showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`,
-        //         pageSizeOptions: [DEFAULT_PAGE_SIZE.toString(), '20', '30', '40'],
-        //         defaultPageSize: DEFAULT_PAGE_SIZE,
-        //         showSizeChanger: true,
-        //         onShowSizeChange(current, pageSize) {  //当几条一页的值改变后调用函数，current：改变显示条数时当前数据所在页；pageSize:改变后的一页显示条数
-        //             self.handlePageChange(current, pageSize);
-        //         },
-        //         onChange(current, pageSize) {  //点击改变页数的选项时调用函数，current:将要跳转的页数
-        //             self.handlePageChange(current, pageSize);
-        //         },
-        //     }
-        // };
-        // return tableProps;
     }
 
     handleAssetSelectChange(value) {
@@ -202,12 +153,17 @@ class AssetAuthTable extends React.Component {
         const { classes } = this.props;
         const { selectRowIndex } = this.state;
         return (selectRowIndex === record.index) ? classes.clickRow : '';
-        // return (selectRowIndex === record.index) ? styles.clickRow : '';
     }
 
     onRow = (record) => {
         return {
             onClick: (event) => {
+                // 发送虚拟设备
+                let asset = SimAssets.getAsset(record.asset_uuid);
+                let basicInfo = { uuid: record.uuid, name: record.name, classify: asset.cls };
+                MySendEvent('my_select_asset_basic_info', basicInfo);
+
+                MySendEvent('my_select_auth_record', record.uuid);
                 this.setState({ selectRowIndex: record.index });
             },
         };
@@ -217,8 +173,9 @@ class AssetAuthTable extends React.Component {
         const { columns, authRecords } = this.state;
         let self = this;
         return (
-            <div style={{ minWidth: GetMainViewMinWidth(), minHeight: GetMainViewMinHeight() }}>
-                <Card title={'接入认证记录'} extra={this.getExtra()}>
+            // <div style={{ minWidth: GetMainViewMinWidth(), minHeight: GetMainViewMinHeight() }}>
+            <div style={{ minHeight: GetMainViewMinHeight() }}>
+                <Card title={'接入认证记录'} extra={this.getExtra()} style={{ height: '100%', margin: 8 }} headStyle={getCardHeaderStyle('main')}>
                     <Table
                         columns={columns}
                         dataSource={authRecords}

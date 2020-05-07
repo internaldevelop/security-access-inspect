@@ -83,7 +83,7 @@ class AccessAuthenticationView extends React.Component {
 
     queryAuthorizationEquips = (targetPage, pageSize) => {
         let startSet = (targetPage - 1) * pageSize + 1;
-        return RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/assets/get-assets', { empower_flag: 1, /*offset: startSet, count: pageSize*/ }, { token: false });
+        return RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/assets/get-assets', { classify: 1, /*offset: startSet, count: pageSize*/ }, { token: false });
     }
 
     queryAuthorizationEquipsCB = (data) => {
@@ -147,7 +147,7 @@ class AccessAuthenticationView extends React.Component {
     handleAuthentication = (index) => (event) => {
         const equips = this.state.equips;
 
-        //RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/assets/get-assets', { empower_flag: 1, /*offset: startSet, count: pageSize*/ }, { token: false });
+        //RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/assets/get-assets', { classify: 1, /*offset: startSet, count: pageSize*/ }, { token: false });
         RestReq.asyncGet(this.queryAuthorizationEquipsCB, '/embed-terminal/authenticate/authenticate', { asset_uuid: equips[index].uuid, }, { token: false });
     }
 

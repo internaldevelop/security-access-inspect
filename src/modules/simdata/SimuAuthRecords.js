@@ -50,6 +50,25 @@ class SimuAuthRecords {
         }
         return authRecords;
     }
+
+    _addAuthDetails(record) {
+        record['finger_print'] = 'YTVlNDIwOWU4NDEzMjFhZTcwNmVlODRiOTRiMzgwODhhMThhY2M3NjQzMjUwZTRiYjBhZjU0M2M5ZDc1OTlhMDg1NGM4ZTA4YzIyODNlYzBlZTMzODgwNmNjYTE3MTIwNjM0MGE1MTBjNWM0MDZiZWI2ZWMzYjZmMTgxNTBjNGI=';
+        record['signature'] = 'NWYyOGYyNGY1NTIwMjMwZmQxZTY2ZWE2YWM2NDllOWY5NjM3NTE1ZjUxNmIyZWY3NGZjOTA2MjJiNjBmMTY1ZWFmY2E4ZjM0ZGI4NDcxYjg1YjliNGEyY2RmNzJmNzUwOTlhZTBlYjg4NjBjNGYzMzkyNTIyNjE3NzhkNDA2ZWI1ZjI4ZjI0ZjU1MjAyMzBmZDFlNjZlYTZhYzY0OWU5Zjk2Mzc1MTVmNTE2YjJlZjc0ZmM5MDYyMmI2MGYxNjVlYWZjYThmMzRkYjg0NzFiODViOWI0YTJjZGY3MmY3NTA5OWFlMGViODg2MGM0ZjMzOTI1MjI2MTc3OGQ0MDZlYg==';
+        record['pub_key'] = 'MzE2M2E4ZDZhNDU0MGVjZjE3OTRlY2UwMjQ1ZjI5MTE1NGQzMGUxMDgwMzU5ZDJlOTk0ZWY3OWMxYTQ2OWFhMGNkODA4NzY5ZDljN2VlMzBjYTM0MmM2ODAzZDJlYmNlYzNlYjcxYTkyOGQ2ZGIxODdkZmIxZmMyY2Y2NDAzOTUzMTYzYThkNmE0NTQwZWNmMTc5NGVjZTAyNDVmMjkxMTU0ZDMwZTEwODAzNTlkMmU5OTRlZjc5YzFhNDY5YWEwY2Q4MDg3NjlkOWM3ZWUzMGNhMzQyYzY4MDNkMmViY2VjM2ViNzFhOTI4ZDZkYjE4N2RmYjFmYzJjZjY0MDM5NQ==';
+        record['cipher_text'] = 'NWYyOGYyNGY1NTIwMjMwZmQxZTY2ZWE2YWM2NDllOWY5NjM3NTE1ZjUxNmIyZWY3NGZjOTA2MjJiNjBmMTY1ZWFmY2E4ZjM0ZGI4NDcxYjg1YjliNGEyY2RmNzJmNzUwOTlhZTBlYjg4NjBjNGYzMzkyNTIyNjE3NzhkNDA2ZWI=';
+        record['plain_text'] = '终端名称：termianl-1\n终端OS：Linux\n系统版本：V2.3.9.22\n。。。\n。。。\n认证时间：2020-04-04 12:59:01';
+    }
+
+    getAuthRecord(authUuid) {
+        let authList = this.allAuths();
+        for (let record of authList) {
+            if (record.uuid === authUuid) {
+                this._addAuthDetails(record);
+                return record;
+            }
+        }
+        return {};
+    }
 }
 
 export default new SimuAuthRecords();

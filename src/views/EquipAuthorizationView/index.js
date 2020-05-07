@@ -65,7 +65,7 @@ class EquipAuthorizationView extends React.Component {
                 let item = DeepClone(equip);
                 item.index = startSet + index + 1;
                 item.key = startSet + index + 1;
-                item.authorization_tag = this.getAuthorizationTag(equip.empower_flag);
+                item.authorization_tag = this.getAuthorizationTag(equip.classify);
                 item.os_type = this.getOSType(equip.os_type);
                 return item;
             });
@@ -75,7 +75,7 @@ class EquipAuthorizationView extends React.Component {
 
     queryBlackEquips = (targetPage, pageSize) => {
         let startSet = (targetPage - 1) * pageSize + 1;
-        return RestReq.asyncGet(this.queryBlackEquipsCB, '/embed-terminal/assets/get-assets', { empower_flag: -1 }, { token: false });
+        return RestReq.asyncGet(this.queryBlackEquipsCB, '/embed-terminal/assets/get-assets', { classify: -1 }, { token: false });
     }
 
     queryWhiteEquipsCB = (data) => {
@@ -85,7 +85,7 @@ class EquipAuthorizationView extends React.Component {
                 let item = DeepClone(equip);
                 item.index = startSet + index + 1;
                 item.key = startSet + index + 1;
-                item.authorization_tag = this.getAuthorizationTag(equip.empower_flag);
+                item.authorization_tag = this.getAuthorizationTag(equip.classify);
                 item.os_type = this.getOSType(equip.os_type);
                 return item;
             });
@@ -95,7 +95,7 @@ class EquipAuthorizationView extends React.Component {
 
     queryWhiteEquips = (targetPage, pageSize) => {
         let startSet = (targetPage - 1) * pageSize + 1;
-        return RestReq.asyncGet(this.queryWhiteEquipsCB, '/embed-terminal/assets/get-assets', { empower_flag: 1 }, { token: false });
+        return RestReq.asyncGet(this.queryWhiteEquipsCB, '/embed-terminal/assets/get-assets', { classify: 1 }, { token: false });
     }
 
     getAuthorizationTag = (type) => {
@@ -131,7 +131,7 @@ class EquipAuthorizationView extends React.Component {
                 let item = DeepClone(equip);
                 item.index = startSet + index + 1;
                 item.key = startSet + index + 1;
-                item.authorization_tag = this.getAuthorizationTag(equip.empower_flag);
+                item.authorization_tag = this.getAuthorizationTag(equip.classify);
                 item.os_type = this.getOSType(equip.os_type);
                 return item;
             });
@@ -201,7 +201,7 @@ class EquipAuthorizationView extends React.Component {
             message.info("请选择一条记录进行授权");
             return;
         }
-        RestReq.asyncGet(this.handleAuthorizationCB, '/embed-terminal/authenticate/to-authorizate', { asset_uuid: selectedEquipRowKeys[0], empower_flag: 1 }, { token: false });
+        RestReq.asyncGet(this.handleAuthorizationCB, '/embed-terminal/authenticate/to-authorizate', { asset_uuid: selectedEquipRowKeys[0], classify: 1 }, { token: false });
     };
 
     getWhiteEquipTableProps() {
@@ -267,7 +267,7 @@ class EquipAuthorizationView extends React.Component {
             selectedEquipRowKeys,
             onChange: this.onSelectEquipChange,
             getCheckboxProps: record => ({
-                disabled: record.empower_flag === 1,// 已经授权的置虚，不再进行授权
+                disabled: record.classify === 1,// 已经授权的置虚，不再进行授权
             }),
         };
 

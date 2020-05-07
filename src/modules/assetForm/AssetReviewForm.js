@@ -24,13 +24,13 @@ export default class AssetReviewForm extends React.Component {
     }
 
     componentWillUnmount() {
-        // 取消事件
+        // 注销事件
         MyUnregisterEvent('my_select_asset_basic_info', this.handleSelectAsset);
     }
 
     handleSelectAsset = (basicInfo) => {
         console.log(basicInfo);
-        this.setState({ assetName: basicInfo.name, assetClass: basicInfo.empower_flag, assetUuid: basicInfo.uuid });
+        this.setState({ assetName: basicInfo.name, assetClass: basicInfo.classify, assetUuid: basicInfo.uuid });
     }
 
     saveAssetClass = () => {

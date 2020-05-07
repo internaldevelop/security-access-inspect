@@ -8,6 +8,8 @@ export function getCardHeaderStyle(mode){
         return {backgroundColor: '#00695C', color: 'white'};
     } else if (mode === 'notify') {
         return {backgroundColor: '#fff9c4', color: 'black'};
+    } else if (mode === 'info-2') {
+        return {backgroundColor: '#fffbe5', color: 'black'};
     }
 
     // 缺省情况下的卡片头部风格设置
