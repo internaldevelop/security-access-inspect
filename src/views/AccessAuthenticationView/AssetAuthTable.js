@@ -7,7 +7,7 @@ import RestReq from '../../utils/RestReq';
 import SimAssets from '../../modules/simdata/SimAssets';
 import SimuAuthRecords from '../../modules/simdata/SimuAuthRecords';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { MySendEvent } from '../../global/environment/MySysEvent';
+import MEvent from '../../rlib/utils/MEvent';
 import MAntdTable from '../../rlib/props/MAntdTable';
 import MAntdCard from '../../rlib/props/MAntdCard';
 import MSelect from '../../rlib/antdComponents/MSelect';
@@ -72,9 +72,9 @@ class AssetAuthTable extends React.Component {
                 // 发送虚拟设备
                 let asset = SimAssets.getAsset(record.asset_uuid);
                 let basicInfo = { uuid: record.uuid, name: record.name, classify: asset.cls };
-                MySendEvent('my_select_asset_basic_info', basicInfo);
+                MEvent.send('my_select_asset_basic_info', basicInfo);
 
-                MySendEvent('my_select_auth_record', record.uuid);
+                MEvent.send('my_select_auth_record', record.uuid);
                 this.setState({ selectRowIndex: record.index });
             },
         };

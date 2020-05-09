@@ -211,12 +211,6 @@ export function getSimulateOptions(assetClass, assetStatus) {
 
 
     _addSimulateAssets(options);
-    // _addSimulateAssets(options, ['水电终端-41', '水电终端-42', '火电终端-43',], AssetClass.NOT_ASSIGN, AssetStatus.OFF_LINE);
-    // _addSimulateAssets(options, ['水电终端-51', '水电终端-52', '火电终端-53',], AssetClass.NOT_ASSIGN, AssetStatus.ON_LINE);
-    // _addSimulateAssets(options, ['配电终端-1', '变电终端-1', '变电终端-2', '变电终端-3', '变电终端-4', '风电终端-1', '风电终端-2',], AssetClass.WHITE_LIST, AssetStatus.OFF_LINE);
-    // _addSimulateAssets(options, ['火电终端-1', '火电终端-2', '水电终端-2', '水电终端-3',], AssetClass.WHITE_LIST, AssetStatus.ON_LINE);
-    // _addSimulateAssets(options, ['水电终端-11', '水电终端-12', '火电终端-21',], AssetClass.BLACK_LIST, AssetStatus.OFF_LINE);
-    // _addSimulateAssets(options, ['水电终端-31', '水电终端-32', '火电终端-33',], AssetClass.BLACK_LIST, AssetStatus.ON_LINE);
 
     return options;
 

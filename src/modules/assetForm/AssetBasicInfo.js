@@ -1,6 +1,6 @@
 import React from 'react'
-import { Card, InputNumber, Form, DatePicker, Switch, Input, Col, Tabs, Popconfirm } from 'antd'
-import { MyRegisterEvent, MyUnregisterEvent } from '../../global/environment/MySysEvent';
+import { Form, Input } from 'antd'
+import MEvent from '../../rlib/utils/MEvent';
 
 const { TextArea } = Input;
 
@@ -14,12 +14,12 @@ export default class AssetBasicInfo extends React.Component {
 
     componentDidMount() {
         // 注册事件
-        MyRegisterEvent('my_select_asset_basic_info', this.handleSelectAsset);
+        MEvent.register('my_select_asset_basic_info', this.handleSelectAsset);
     }
 
     componentWillUnmount() {
         // 注销事件
-        MyUnregisterEvent('my_select_asset_basic_info', this.handleSelectAsset);
+        MEvent.unregister('my_select_asset_basic_info', this.handleSelectAsset);
     }
 
     handleSelectAsset = (basicInfo) => {

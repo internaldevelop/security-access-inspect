@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, Radio, Form, Button, Switch, Input, Col, Tabs, Popconfirm } from 'antd'
 import MAntdCard from '../../rlib/props/MAntdCard';
-import { MyRegisterEvent, MyUnregisterEvent } from '../../global/environment/MySysEvent';
+import MEvent from '../../rlib/utils/MEvent';
 import { AssetClass, AssetStatus, getAssetClass, getCateIndex, getCateIndexByClass, getCateIndexByStatus } from '../../modules/assetForm/AssetStatus'
 
 export default class AssetReviewForm extends React.Component {
@@ -20,12 +20,12 @@ export default class AssetReviewForm extends React.Component {
 
     componentDidMount() {
         // 注册事件
-        MyRegisterEvent('my_select_asset_basic_info', this.handleSelectAsset);
+        MEvent.register('my_select_asset_basic_info', this.handleSelectAsset);
     }
 
     componentWillUnmount() {
         // 注销事件
-        MyUnregisterEvent('my_select_asset_basic_info', this.handleSelectAsset);
+        MEvent.unregister('my_select_asset_basic_info', this.handleSelectAsset);
     }
 
     handleSelectAsset = (basicInfo) => {

@@ -1,12 +1,13 @@
 import React from 'react';
 import { Tag } from 'antd';
+import MObjUtils from '../../rlib/utils/MObjUtils';
 
 export default function authResultTag(authResult) {
-    if (typeof(authResult) === 'string') {
+    if (MObjUtils.isString(authResult)) {
         authResult = parseInt(authResult);
     }
 
-    if (typeof(authResult) !== 'number') {
+    if (!MObjUtils.isNumber(authResult)) {
         return (<div></div>);
     }
 

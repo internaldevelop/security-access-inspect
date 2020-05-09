@@ -19,7 +19,7 @@ const hostMenus = [
         key: '/home/access-authentication',
     },
     {
-        title: '运行状态监测',
+        title: '实时监测',
         icon: 'line-chart',
         key: '/home/history-performance',
     },

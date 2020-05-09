@@ -4,7 +4,7 @@ import { Card, Select, Icon, Button, Col, Tabs, Popconfirm } from 'antd'
 import { getSimulateOptions, getGraphOptions } from './options';
 import MAntdCard from '../../rlib/props/MAntdCard';
 import { AssetClass, AssetStatus, getAssetClass, getCateIndex, getCateIndexByClass, getCateIndexByStatus } from '../../modules/assetForm/AssetStatus'
-import { MyRegisterEvent, MyUnregisterEvent, MySendEvent } from '../../global/environment/MySysEvent';
+import MEvent from '../../rlib/utils/MEvent';
 import RestReq from '../../utils/RestReq';
 import { DeepClone } from '../../utils/ObjUtils';
 
@@ -126,16 +126,16 @@ export default class AssetsGraph extends React.Component {
         // echarts 中，错误地把 path(links) 当做 edge，links 的 dataType 是 'edge'
         if (event.dataType === 'node') {
             // event.data['assetClass'] = getAssetClass(event.data.category);
-            // MySendEvent('my_select_asset_basic_info', event.data);
+            // MEvent.send('my_select_asset_basic_info', event.data);
 
             let assetInfo = this.findAssetInfo(event.data.value);
             if (assetInfo.basicInfo.hasOwnProperty('uuid')) {
-                MySendEvent('my_select_asset_basic_info', assetInfo.basicInfo);
-                MySendEvent('my_select_asset_detail_info', assetInfo.detailInfo);
+                MEvent.send('my_select_asset_basic_info', assetInfo.basicInfo);
+                MEvent.send('my_select_asset_detail_info', assetInfo.detailInfo);
             } else {
                 // 发送虚拟设备
                 let basicInfo = {uuid: event.data.value, name: event.data.name, classify: getAssetClass(event.data.category)};
-                MySendEvent('my_select_asset_basic_info', basicInfo);
+                MEvent.send('my_select_asset_basic_info', basicInfo);
             }
         }
     }

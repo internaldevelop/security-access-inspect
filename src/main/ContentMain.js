@@ -8,16 +8,9 @@ import SystemLogsView from '../views/SystemLogsView'
 import UsersManageView from '../views/UsersManageView'
 import UserInfoView from '../views/UsersManageView/UserInfoView'
 import AboutView from '../views/AboutView'
-import FirmwareFetchView from '../views/FirmwareFetchView';
-import CertFileGenerate from '../views/CertFileGenerate';
-import CertFileImport from '../views/CertFileImport';
 import PerformanceOverView from '../views/PerformanceOverView';
 import VulnerManageInfoView from '../views/VulnerManageView/VulnerManageInfoView'
 import VulnerStatisticsView from '../views/VulnerStatisticsView/VulnerStatisticsView'
-import FirmwareFunctionView from '../views/FirmwareFunctionView';
-import FirmwarePackageView from '../views/FirmwarePackageView';
-import DataBackupView from '../views/DataBackupView';
-import DataRestoreView from '../views/DataRestoreView';
 import EquipAuthorizationView from '../views/EquipAuthorizationView';
 import AccessAuthenticationView from '../views/AccessAuthenticationView';
 import FingerprintManagementView from '../views/FingerprintManagementView';
@@ -47,20 +40,10 @@ class ContentMain extends React.Component {
         <PrivateRoute exact path='/home/sysadmin/users' component={UsersManageView} />
         <PrivateRoute exact path='/home/sysadmin/personal' component={UserInfoView} />
 
-        <PrivateRoute exact path='/home/firmware-analyze/firmware-fetch' component={FirmwareFetchView} />
-        <PrivateRoute exact path='/home/firmware-analyze/package-fetch' component={FirmwarePackageView} />
-        <PrivateRoute exact path='/home/firmware-analyze/function-fetch' component={FirmwareFunctionView} />
-
-        <PrivateRoute exact path='/home/certfile-manage/generate' component={CertFileGenerate} />
-        <PrivateRoute exact path='/home/certfile-manage/import' component={CertFileImport} />
-
         <PrivateRoute exact path='/home/history-performance' component={PerformanceOverView} />
 
         <PrivateRoute exact path='/home/vulner-manage/info' component={VulnerManageInfoView} />
         <PrivateRoute exact path='/home/vulner-stat' component={VulnerStatisticsView} />
-
-        <PrivateRoute exact path='/home/sysadmin/backup' component={DataBackupView} />
-        <PrivateRoute exact path='/home/sysadmin/restore' component={DataRestoreView} />
 
         <PrivateRoute exact path='/home/about' component={AboutView} />
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tabs, Input } from 'antd';
-import { MyRegisterEvent, MyUnregisterEvent } from '../../global/environment/MySysEvent';
-import { hasOwnProperty } from 'tslint/lib/utils';
+import MEvent from '../../rlib/utils/MEvent';
 
 const { TabPane } = Tabs;
 const { TextArea } = Input;
@@ -18,12 +17,12 @@ export default class AuthDetails extends React.Component {
 
     componentDidMount() {
         // 注册事件
-        MyRegisterEvent('my_auth_details_info', this.handleAuthDetails);
+        MEvent.register('my_auth_details_info', this.handleAuthDetails);
     }
 
     componentWillUnmount() {
         // 注销事件
-        MyUnregisterEvent('my_auth_details_info', this.handleAuthDetails);
+        MEvent.unregister('my_auth_details_info', this.handleAuthDetails);
     }
 
     handleAuthDetails = (authDetails) => {
