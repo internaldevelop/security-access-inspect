@@ -2,8 +2,9 @@ import React from 'react'
 import ReactEcharts from 'echarts-for-react';
 import { Card, Select, Icon, Row, Col, Tabs, Popconfirm } from 'antd'
 import MEvent from '../../rlib/utils/MEvent';
-import MUsageChart from '../../rlib/echarts/MUsageChart';
-import MLineChart from '../../rlib/echarts/MLineChart';
+import MSingleTimeLine from '../../rlib/echarts/MSingleTimeLine';
+import MMultiTimeLine from '../../rlib/echarts/MMultiTimeLine';
+import MGauge from '../../rlib/echarts/MGauge';
 import MTimeUtils from '../../rlib/utils/MTimeUtils';
 import MAntdCard from '../../rlib/props/MAntdCard';
 
@@ -57,18 +58,25 @@ export default class PerformMonitorView extends React.Component {
             tm.setSeconds(tm.getSeconds() - 3000 * i);
             usagesList2.push({ time: MTimeUtils.formatStr(tm, 'UTC'), data: [i / 5.0, i / 3.0] });
         }
+        let rowHeight = 130;
         return (<div>
-            <Card title={asset_name} bodyStyle={{ minHeight: '300px' }} headStyle={MAntdCard.headerStyle('main')}>
-                <Row gutter={20} style={{ marginBottom: 24 }}>
-                <div style={{height: 150}}>
-                <MUsageChart name={'CPU(%)'} usagesList={usagesList} extraParams={{ updateEvent: 'CPU_' + asset_uuid }} />
-                </div>
+            <Card title={asset_name} bodyStyle={{ minHeight: rowHeight * 2 }} headStyle={MAntdCard.headerStyle('main')}>
+                <Row gutter={20} style={{ marginBottom: 18 }}>
+                    <Col span={18}>
+                        <MSingleTimeLine name={'CPU(%)'} usagesList={usagesList} extraParams={{ updateEvent: 'CPU_' + asset_uuid, height: rowHeight }} />
+                    </Col>
+                    <Col span={6}>
+                        <MGauge name={'内存(%)'} extraParams={{ updateEvent: 'MEMORY_' + asset_uuid, height: rowHeight }} />
+                    </Col>
                 </Row>
-                <Row>
-                <div style={{height: 150}}>
-                <MLineChart name={'网络流量'} usagesList={usagesList2}
-                    extraParams={{ updateEvent: 'NET_' + asset_uuid, lineNames: ['In', 'Out'] }} />
-                </div>
+                <Row gutter={20}>
+                    <Col span={18}>
+                        <MMultiTimeLine name={'网络流量'} usagesList={usagesList2}
+                            extraParams={{ updateEvent: 'NET_' + asset_uuid, lineNames: ['In', 'Out'], height: rowHeight }} />
+                    </Col>
+                    <Col span={6}>
+                        <MGauge name={'磁盘'} extraParams={{ updateEvent: 'DISK_' + asset_uuid, height: rowHeight }} />
+                    </Col>
                 </Row>
             </Card>
         </div>);

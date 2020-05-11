@@ -4,9 +4,9 @@ import MTimeUtils from '../utils/MTimeUtils';
 import MEvent from '../utils/MEvent';
 
 var MAX_COUNT = 60;
-var TIME_GAP = 3000;
+var DEFAULT_HEIGHT = 300;
 
-export default class MLineChart extends Component {
+export default class MMultiTimeLine extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -40,17 +40,26 @@ export default class MLineChart extends Component {
         this.setState({ dataSource });
     }
 
+    _defaultColors() {
+        // 最大支持10条曲线
+        return ['#005792', '#fd5f00', '#fbc01b', '#289df5', '#ff5050', '#fbf579', '#005995', '#fa625f', '#600473', '#13334c', ];
+    }
+
     initExtraParams() {
         let extraParams = {};
         if (!this.props.hasOwnProperty('extraParams')) {
             extraParams = {
-                lineNames: ['折线']
+                lineNames: ['折线'],
+                lineColors: ['#fbc01b'],
             }
         } else {
             extraParams = this.props.extraParams;
         }
 
         if (!extraParams.hasOwnProperty('lineNames')) { extraParams['lineNames'] = ['折线']; }
+        if (!extraParams.hasOwnProperty('lineColors')) { 
+            extraParams['lineColors'] = extraParams['lineNames'].map((item, index) => this._defaultColors()[index]); 
+        }
 
         return extraParams;
     }
@@ -105,21 +114,21 @@ export default class MLineChart extends Component {
             tooltip: {
                 trigger: 'axis',
                 showContent: true,
-                alwaysShowContent: true,
+                // alwaysShowContent: true,
                 axisPointer: { type: 'cross' },
             },
             legend: [{
                 // selectedMode: 'single',
                 data: extraParams.lineNames.map(item => item)
             }],
-            grid : {
-                left : '1%',   //组件离容器左侧的距离
-                right : '1%',
-                bottom : '1%',
-                top: '10%',
-                height: 120,
-                containLabel : true     //grid 区域是否包含坐标轴的刻度标签
-            },
+            // grid : {
+            //     left : '1%',   //组件离容器左侧的距离
+            //     right : '1%',
+            //     bottom : '1%',
+            //     top: '10%',
+            //     height: 120,
+            //     containLabel : true     //grid 区域是否包含坐标轴的刻度标签
+            // },
             dataset: { source: dataSource },
             xAxis: {
                 type: 'category',
@@ -137,11 +146,31 @@ export default class MLineChart extends Component {
             series: [],
         };
 
+        if (extraParams.hasOwnProperty('height')) {
+            options.grid = {
+                left : '1%',   //组件离容器左侧的距离
+                right : '1%',
+                bottom : '1%',
+                top: '10%',
+                height: extraParams['height'] - 30,
+                containLabel: true     //grid 区域是否包含坐标轴的刻度标签
+            }
+        } else {
+            options.grid = { containLabel: true }
+        }
+
         // for (let index = 0; index < extraParams.lineNames.length; index++) {
-        for (let lineName of extraParams.lineNames) {
+        for (let lineColor of extraParams.lineColors) {
             options.series.push({
                 type: 'line', smooth: true,
                 seriesLayoutBy: 'row',
+                // stack: '总量',
+                // areaStyle: { type: 'default', opacity: 0.1 },
+                itemStyle: { normal: {
+                        color: lineColor, // 折线条的颜色
+                        borderColor: lineColor, // 拐点边框颜色
+                    }},
+                // label: { normal: { show: true, posotion: 'top' }}
                 // symbol: 'none',
                 // encode: {
                 //     // Map the "value" column to Y axis.
@@ -156,11 +185,15 @@ export default class MLineChart extends Component {
     }
 
     render() {
-        const { dataSource } = this.state;
+        const { dataSource, extraParams } = this.state;
         let option = this.getOption(dataSource);
-        return (
-            <ReactEcharts option={option} />
-        );
+        if (extraParams.hasOwnProperty('height')) {
+            return (<div style={{ height: extraParams['height'] }}>
+                <ReactEcharts option={option} />
+            </div>)
+        } else {
+            return (<ReactEcharts option={option} />);
+        }
     }
 
 }

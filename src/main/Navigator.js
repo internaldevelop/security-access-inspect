@@ -8,11 +8,11 @@ const hostMenus = [
         icon: 'control',
         key: '/home/assets-scan',
     },
-    {
-        title: '设备授权',
-        icon: 'control',
-        key: '/home/equip-authorization',
-    },
+    // {
+    //     title: '设备授权',
+    //     icon: 'control',
+    //     key: '/home/equip-authorization',
+    // },
     {
         title: '接入认证',
         icon: 'project',
@@ -23,16 +23,16 @@ const hostMenus = [
         icon: 'line-chart',
         key: '/home/history-performance',
     },
-    // {
-    //     title: '流量监测与审计',
-    //     icon: 'line-chart',
-    //     key: '/home/history-performance',
-    // },
     {
-        title: '指纹管理',
+        title: '流量审计',
         icon: 'safety-certificate',
-        key: '/home/fingerprint-management/',
+        key: '/home/flow-audit',
     },
+    // {
+    //     title: '指纹管理',
+    //     icon: 'safety-certificate',
+    //     key: '/home/fingerprint-management/',
+    // },
     {
         title: '系统管理',
         icon: 'setting',

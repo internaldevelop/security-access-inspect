@@ -1,23 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { observer, inject } from 'mobx-react'
 
-import { Tabs, Card, Skeleton, Select, Input, Spin, Button, Row, Col, Icon, Collapse, message, Modal } from 'antd';
+import { Row, Col } from 'antd';
 
-import { renderAssetInfo } from './AssetInfo';
-import ProcUsageLine from '../AssetOverView/ProcUsageLine';
-import HistoryUsageLine from './HistoryUsageLine';
-import UsageGauge from '../AssetOverView/UsageGauge';
-import HttpRequest from '../../utils/HttpRequest';
-import { OpenSocket, CloseSocket } from '../../utils/WebSocket';
-import { sockMsgType } from '../../global/enumeration/SockMsgType'
-import { GetMainServerRootUrl, GetAgentRootUrl } from '../../global/environment'
 import MEvent from '../../rlib/utils/MEvent';
 import MStatCardV3 from '../../rlib/antdComponents/MStatCardV3';
-import MAntdCard from '../../rlib/props/MAntdCard';
 import PerformMonitorView from './PerformMonitorView';
-import MUsageChart from '../../rlib/echarts/MUsageChart';
 import SimAssets from '../../modules/simdata/SimAssets';
 import MTimeUtils from '../../rlib/utils/MTimeUtils';
 import MNumUtils from '../../rlib/utils/MNumUtils';
@@ -28,7 +16,7 @@ class PerformanceOverView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            assets: [] = SimAssets.allAssets(),
+            assets: SimAssets.allAssets(),
             stats: this.fetchVirtualStats(),
         };
 
@@ -46,11 +34,17 @@ class PerformanceOverView extends React.Component {
                 data: MNumUtils.rand(30, 70),
             }
             MEvent.send('CPU_' + assets[index].uuid, cpuUsage);
+
             let netUsage = {
                 time: MTimeUtils.now(),
-                data: [MNumUtils.rand(30), MNumUtils.rand(30)]
+                data: [MNumUtils.rand(10)+20, MNumUtils.rand(30) + 20]
             }
             MEvent.send('NET_' + assets[index].uuid, netUsage);
+
+            let memPercent = MNumUtils.rand(80)+20;
+            MEvent.send('MEMORY_' + assets[index].uuid, memPercent / 100.0);
+            let diskPercent = MNumUtils.rand(100);
+            MEvent.send('DISK_' + assets[index].uuid, diskPercent / 100.0);
         }
     }
 

@@ -9,6 +9,7 @@ import UsersManageView from '../views/UsersManageView'
 import UserInfoView from '../views/UsersManageView/UserInfoView'
 import AboutView from '../views/AboutView'
 import PerformanceOverView from '../views/PerformanceOverView';
+import FlowAuditView from '../views/FlowAuditView';
 import VulnerManageInfoView from '../views/VulnerManageView/VulnerManageInfoView'
 import VulnerStatisticsView from '../views/VulnerStatisticsView/VulnerStatisticsView'
 import EquipAuthorizationView from '../views/EquipAuthorizationView';
@@ -41,6 +42,7 @@ class ContentMain extends React.Component {
         <PrivateRoute exact path='/home/sysadmin/personal' component={UserInfoView} />
 
         <PrivateRoute exact path='/home/history-performance' component={PerformanceOverView} />
+        <PrivateRoute exact path='/home/flow-audit' component={FlowAuditView} />
 
         <PrivateRoute exact path='/home/vulner-manage/info' component={VulnerManageInfoView} />
         <PrivateRoute exact path='/home/vulner-stat' component={VulnerStatisticsView} />

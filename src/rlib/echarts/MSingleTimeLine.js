@@ -8,7 +8,7 @@ var TIME_GAP = 3000;
 var DEFAULT_LINE_COLOR = '#289df5';
 var DEFAULT_OPACITY = 0.1;
 
-export default class MUsageChart extends Component {
+export default class MSingleTimeLine extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -118,24 +118,16 @@ export default class MUsageChart extends Component {
             opacity: extraParams.opacity
         }
 
-        return {
+        let options = {
             tooltip: {
                 trigger: 'axis',
                 // triggerOn: 'none',
                 showContent: true,
-                alwaysShowContent: true,
+                // alwaysShowContent: true,
                 axisPointer: { type: 'cross' },
                 formatter: (contents) => this.getTooltipFormatter(contents)
             },
             dataset: { source: dataSource },
-            grid : {
-                left : '1%',   //组件离容器左侧的距离
-                right : '1%',
-                bottom : '1%',
-                top: '10%',
-                height: 120,
-                containLabel : true     //grid 区域是否包含坐标轴的刻度标签
-            },
             yAxis: { name: name, },
             xAxis: {
                 type: 'category',
@@ -160,13 +152,35 @@ export default class MUsageChart extends Component {
                 }
             ]
         };
+
+        if (extraParams.hasOwnProperty('height')) {
+            options.grid = {
+                left : '1%',   //组件离容器左侧的距离
+                right : '1%',
+                bottom : '1%',
+                top: '10%',
+                height: extraParams['height'] - 30,
+                containLabel : true     //grid 区域是否包含坐标轴的刻度标签
+            }
+        } else {
+            options.grid = { containLabel : true }
+        }
+
+        return options;
     }
 
     render() {
+        const { extraParams } = this.state;
+        let hasHeight = extraParams.hasOwnProperty('height');
+
         let option = this.getOption();
-        return (
-            <ReactEcharts option={option} />
-        );
+        if (hasHeight) {
+            return (<div style={{ height: extraParams['height'] }}>
+                <ReactEcharts option={option} />
+            </div>)
+        } else {
+            return (<ReactEcharts option={option} />);
+        }
     }
 
 }
