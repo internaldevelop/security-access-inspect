@@ -3,8 +3,6 @@ import { inject, observer } from 'mobx-react';
 import React from 'react';
 import { DeepClone } from '../../utils/ObjUtils';
 import { GetMainViewHeight, GetMainViewMinHeight, GetMainViewMinWidth } from '../../utils/PageUtils';
-import { columns as AccessLogColumn } from './AccessLogColumn';
-import { columns as Column } from './Column';
 import AssetAuthTable from './AssetAuthTable';
 import AuthRecordInfo from './AuthRecordInfo';
 import RestReq from '../../utils/RestReq';
@@ -43,16 +41,16 @@ class AccessAuthenticationView extends React.Component {
         const { classes } = this.props;
         let self = this;
         return (
-                <div style={{ minWidth: GetMainViewMinWidth(), minHeight: GetMainViewMinHeight() }}>
-                    <Row>
-                        <Col span={15}>
-                            <AssetAuthTable />
+            <div style={{ minWidth: GetMainViewMinWidth(), minHeight: GetMainViewMinHeight() }}>
+                <Row>
+                    <Col span={15}>
+                        <AssetAuthTable />
                     </Col>
                     <Col span={9}>
-                    <AuthRecordInfo />
+                        <AuthRecordInfo />
                     </Col>
-                    </Row>
-                </div>
+                </Row>
+            </div>
         );
     }
 }
