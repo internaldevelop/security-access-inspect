@@ -10,11 +10,12 @@ export function renderAssetInfo(assetInfo) {
     let system;
     return (
         <Collapse accordion defaultActiveKey='System'>
-            {assetGeneralInfo(assetInfo, 'System')}
-            {assetCpuInfo(assetInfo.CPU)}
+            {assetComputerSysInfo(assetInfo)}
+            {assetGeneralInfo(assetInfo)}
+            {assetCpuInfo(assetInfo)}
             {assetMenInfo(assetInfo.Memory, assetInfo.Swap)}
-            {assetNetworkInfo(assetInfo['Net Config'])}
-            {assetPortInfo(assetInfo['Open Ports'])}
+            {assetNetworkInfo(assetInfo)}
+            {assetDiskInfo(assetInfo)}
         </Collapse>
     );
 
@@ -35,37 +36,65 @@ const systemInfoItems = [
     { name: 'user.timezone', desc: '用户时区' },
 ];
 
-function assetGeneralInfo(assetInfo, infoType) {
-    let info;
-    let title;
-    let items;
-    if (infoType === 'System') {
-        items = systemInfoItems;
-        title = '系统参数';
-    }
-    if (assetInfo.hasOwnProperty(infoType) && ((info = assetInfo[infoType]) !== null)) {
+function assetGeneralInfo(assetInfo) {
+
+    if (assetInfo.hasOwnProperty('sys_type') && (assetInfo['sys_type'] !== null)) {
         return (
-            <Panel header={title} key={infoType}>
-                {items.map((item) => tagInfo(item.desc, info[item.name]))}
+            <Panel header={'操作系统'} key={'system'}>
+                {tagInfo('系统类型', assetInfo.sys_type)}
+                {tagInfo('系统名称', assetInfo.sys_name)}
+                {tagInfo('系统版本', assetInfo.sys_version)}
             </Panel>
         );
     } else {
         return (
-            <Panel header={'未知'} key={infoType}>
+            <Panel header={'系统信息获取失败'} key={'system'}>
             </Panel>
         );
     }
 }
 
-function assetCpuInfo(cpuInfo) {
-    if (cpuInfo instanceof Array && cpuInfo.length > 0) {
-        let cpuItem = cpuInfo[0];
+function assetComputerSysInfo(assetInfo) {
+
+    if (assetInfo.hasOwnProperty('ComputerSystem') && (assetInfo['ComputerSystem'] !== null)) {
+        let hwSys = assetInfo['ComputerSystem'];
+        return (
+            <Panel header={'硬件系统'} key={'ComputerSystem'}>
+                {tagInfo('型号', hwSys.model)}
+                {tagInfo('制造商', hwSys.manufacturer)}
+                {tagInfo('主板厂商', hwSys.baseboard.manufacturer)}
+                {tagInfo('主板序列号', hwSys.baseboard.serialNumber)}
+                {tagInfo('主板版本号', hwSys.baseboard.version)}
+                {tagInfo('固件厂商', hwSys.firmware.manufacturer)}
+                {tagInfo('固件名称', hwSys.firmware.name)}
+                {tagInfo('固件版本', hwSys.firmware.version)}
+                {tagInfo('固件发布日期', hwSys.firmware.releaseDate)}
+            </Panel>
+        );
+    } else {
+        return (
+            <Panel header={'硬件信息获取失败'} key={'ComputerSystem'}>
+            </Panel>
+        );
+    }
+}
+
+function assetCpuInfo(assetInfo) {
+    if (assetInfo.hasOwnProperty('CPU') && (assetInfo['CPU'] !== null)) {
+        let cpuInfo = assetInfo['CPU'];
         return (
             <Panel header={'CPU信息'} key={'CPUInfo'}>
-                {tagInfo('CPU核', cpuInfo.length + '核')}
-                {tagInfo('制造商', cpuItem.vendor)}
-                {tagInfo('型号', cpuItem.model)}
-                {tagInfo('主频', cpuItem.mhz)}
+                {tagInfo('CPU', cpuInfo.name)}
+                {tagInfo('制造商', cpuInfo.vendor)}
+                {tagInfo('ID', cpuInfo.processorID)}
+                {tagInfo('SN', cpuInfo.systemSerialNumber)}
+                {tagInfo('型号', cpuInfo.model)}
+                {tagInfo('主频', '' + cpuInfo.vendorFreq / (1000.0 * 1000 * 1000) + 'GHz')}
+                {tagInfo('CPU族', cpuInfo.family)}
+                {tagInfo('标识', cpuInfo.identifier)}
+                {tagInfo('64位', cpuInfo.cpu64bit ? '是' : '否')}
+                {tagInfo('物理数量', cpuInfo.physicalProcessorCount)}
+                {tagInfo('逻辑数量', cpuInfo.logicalProcessorCount)}
             </Panel>
         );
     } else {
@@ -126,23 +155,21 @@ function assetMenInfo(memInfo, swapInfo) {
 }
 
 function netCardInfo(netCard, index) {
-    if (netCard.address === '0.0.0.0') {
-        return <div></div>;
-    } else {
-        return (
-            <div>
-                {tagInfo(netCard.name + ' MAC', netCard.hwaddr)}
-                {tagInfo(netCard.name + '类型', netCard.type)}
-                {tagInfo(netCard.name + '描述', netCard.description)}
-                {tagInfo(netCard.name + ' IP', netCard.address)}
-                <Divider />
-            </div>
-        );
-    }
+    let netName = '网络' + (index + 1);
+    return (
+        <div>
+            {tagInfo(netName + '名称', netCard.netWorkName)}
+            {tagInfo(netName + ' MAC', netCard.macAddress)}
+            {tagInfo(netName + '速度', netCard.speed)}
+            {tagInfo(netName + 'MTU', netCard.mtu)}
+            <Divider />
+        </div>
+    );
 }
 
-function assetNetworkInfo(networkInfo) {
-    if (networkInfo instanceof Array && networkInfo.length > 0) {
+function assetNetworkInfo(assetInfo) {
+    if (assetInfo.hasOwnProperty('Network') && (assetInfo['Network'] !== null)) {
+        let networkInfo = assetInfo['Network'];
         return (
             <Panel header={'网络信息'} key={'Network'}>
                 {networkInfo.map((netCard, index) => netCardInfo(netCard, index))}
@@ -151,6 +178,21 @@ function assetNetworkInfo(networkInfo) {
     } else {
         return (
             <Panel header={'网络信息获取失败'} key={'Network'}>
+            </Panel>
+        );
+    }
+}
+
+function assetDiskInfo(assetInfo) {
+    if (assetInfo.hasOwnProperty('Disk') && (assetInfo['Disk'] !== null)) {
+        let diskInfo = assetInfo['Disk'];
+        return (
+            <Panel header={'磁盘信息'} key={'DiskInfo'}>
+            </Panel>
+        );
+    } else {
+        return (
+            <Panel header={'磁盘信息获取失败'} key={'DiskInfo'}>
             </Panel>
         );
     }

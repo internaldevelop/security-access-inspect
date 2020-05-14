@@ -41,6 +41,10 @@ class SimuAuthRecords {
     }
 
     allAuths() {
+        if (!global.simuData) {
+            return [];
+        }
+
         let authRecords = [];
         for (let i=0; i<10; i++) {
             this.generateAuthsGroup(authRecords, '2020-04-' + i + ' 10:57:16');

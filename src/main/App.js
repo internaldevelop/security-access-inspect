@@ -32,6 +32,8 @@ class App extends Component {
   // }
   componentWillMount = () => {
     LoadEnvironConfig();
+
+    global.simuData = true;
   }
 
   componentDidMount() {

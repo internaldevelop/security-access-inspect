@@ -8,6 +8,7 @@ var _def = {
     LOCAL: '192.168.1.100',
     TRANS_P: ['TCP', 'UDP', 'ICMP', 'ARP'],
     APP_P: ['MODBUS', 'S7', 'IEC-104', 'Profinet', '--', '--', '--'],
+    PORT: ['80', '502', '39461', '39460', '39459', '102', '138', '137', '67', '6001'],
 }
 
 class SimNetPackets {
@@ -28,19 +29,29 @@ class SimNetPackets {
         return (direction === 1 ? 'IN' : 'OUT');
     }
 
-    randTransP() {
-        let count = _def['TRANS_P'].length;
+    _randElemnt(name) {
+        let count = _def[name].length;
         let index = MNumUtils.rand(count);
-        return _def['TRANS_P'][index];
+        return _def[name][index];
+    }
+
+    randTransP() {
+        return this._randElemnt('TRANS_P');
     }
 
     randAppP() {
-        let count = _def['APP_P'].length;
-        let index = MNumUtils.rand(count);
-        return _def['APP_P'][index];
+        return this._randElemnt('APP_P');
+    }
+
+    randPort() {
+        return this._randElemnt('PORT');
     }
 
     allPackets() {
+        if (!global.simuData) {
+            return [];
+        }
+        
         _packsList = [];
         for (let index=0; index < 100; index++ ) {
             let pack = {
@@ -49,6 +60,8 @@ class SimNetPackets {
                 direction: this.randDirection(),
                 transport_protocol: this.randTransP(),
                 app_protocol: this.randAppP(),
+                source_port: this.randPort(),
+                dest_port: this.randPort(),
             }
 
             if (pack['direction'] === 'IN') {

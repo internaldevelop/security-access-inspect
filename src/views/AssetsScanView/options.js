@@ -223,8 +223,9 @@ function _addAsset(options, asset) {
     // classify: 0/1/2，对应黑白名单等
     let assetClass = asset.classify;
 
-    // TODO: 接口未返回，暂时设定为在线
-    let assetStatus = AssetStatus.ON_LINE;
+    // 在线状态: 0/1，对应
+    let assetStatus = parseInt(asset.on_line);
+    // let assetStatus = AssetStatus.ON_LINE;
 
     let category = getCateIndex(assetClass, assetStatus);
 

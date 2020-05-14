@@ -36,15 +36,44 @@ export default class AssetsGraph extends React.Component {
             let basicInfo = DeepClone(asset);
             return basicInfo;
         })
-        this.setState({ assetBasicInfos });
-    }
 
-    queryDetailInfosCB = (data) => {
+        this.setState({ assetBasicInfos });
+
+        // 获取到资产后，默认选择第一个设备
+        if (assetBasicInfos.length > 0) {
+            this.selectAsset(assetBasicInfos[0].uuid);
+        }
     }
 
     getAllAssets() {
         RestReq.asyncGet(this.queryBasicInfosCB, '/embed-terminal/assets/get-assets', {}, { token: false });
-        // RestReq.asyncGet(this.queryDetailInfosCB, '/embed-terminal/assets/get-assets-details');
+    }
+
+    fetchDetailInfoCB = (data) => {
+        const { assetDetailInfos } = this.state;
+        let payload = data.payload;
+
+        // 解析并保存设备详情
+        let detailInfo = {};
+        detailInfo['uuid'] = payload['asset_uuid'];
+        detailInfo['sym_key'] = payload['sym_key'];
+        detailInfo['public_key'] = payload['public_key'];
+
+        detailInfo['plaintext'] = JSON.parse(payload['plaintext']);
+        // console.log(detailInfo['plaintext']);
+
+        // detailInfo['fingerprint'] = JSON.parse(payload['dev_fingerprint']);
+
+        // 缓存设备详情
+        assetDetailInfos.push(detailInfo);
+        this.setState({ assetDetailInfos });
+
+        // 发送事件给其它组件处理
+        MEvent.send('my_select_asset_detail_info', detailInfo);
+    }
+
+    fetchAsssetDetailInfo(assetUuid) {
+        RestReq.asyncGet(this.fetchDetailInfoCB, '/embed-terminal/assets/get-asset-info', {asset_uuid: assetUuid});
     }
 
     handleAssetClassChange = (value) => {
@@ -117,7 +146,7 @@ export default class AssetsGraph extends React.Component {
                 detailInfo = item;
             }
         }
-        return {basicInfo, detailInfo};
+        return { basicInfo, detailInfo };
     }
 
     onClick(event) {
@@ -128,15 +157,32 @@ export default class AssetsGraph extends React.Component {
             // event.data['assetClass'] = getAssetClass(event.data.category);
             // MEvent.send('my_select_asset_basic_info', event.data);
 
-            let assetInfo = this.findAssetInfo(event.data.value);
-            if (assetInfo.basicInfo.hasOwnProperty('uuid')) {
-                MEvent.send('my_select_asset_basic_info', assetInfo.basicInfo);
-                MEvent.send('my_select_asset_detail_info', assetInfo.detailInfo);
-            } else {
-                // 发送虚拟设备
-                let basicInfo = {uuid: event.data.value, name: event.data.name, classify: getAssetClass(event.data.category)};
+            // let assetInfo = this.findAssetInfo(event.data.value);
+            this.selectAsset(event.data.value, event);
+        }
+    }
+
+    selectAsset(assetUuid, event = null) {
+        let assetInfo = this.findAssetInfo(assetUuid);
+
+        if (assetInfo.basicInfo.hasOwnProperty('uuid')) {
+            // 查找到设备信息，发送事件给其它组件处理
+            MEvent.send('my_select_asset_basic_info', assetInfo.basicInfo);
+            // MEvent.send('my_select_asset_detail_info', assetInfo.detailInfo);
+        } else {
+            // 设备信息列表中找不到该设备，又有事件产生，说明是虚拟设备
+            if (event != null) {
+                let basicInfo = { uuid: event.data.value, name: event.data.name, classify: getAssetClass(event.data.category) };
                 MEvent.send('my_select_asset_basic_info', basicInfo);
             }
+        }
+
+        if (assetInfo.detailInfo.hasOwnProperty('uuid')) {
+            // 查找到设备详情，发送事件给其它组件处理
+            MEvent.send('my_select_asset_detail_info', assetInfo.detailInfo);
+        } else {
+            // 未查到该设备，说明缓存中还没有该设备详情，调用后台接口获取设备详情
+            this.fetchAsssetDetailInfo(assetUuid);
         }
     }
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Form, Input } from 'antd'
 import MEvent from '../../rlib/utils/MEvent';
+import { getOSName } from '../const/OSType';
 
 const { TextArea } = Input;
 
@@ -41,22 +42,22 @@ export default class AssetBasicInfo extends React.Component {
             layout="horizontal"
         >
             <Form.Item label="终端名称">
-                <Input value={basicInfo.name} />
+                <Input value={basicInfo.name} readOnly />
             </Form.Item>
             <Form.Item label="终端标识">
-                <Input value={basicInfo.uuid} />
+                <TextArea value={basicInfo.uuid} autoSize={{ minRows: 2, maxRows: 3 }} readOnly />
             </Form.Item>
-            <Form.Item label="分类">
+            {/* <Form.Item label="分类">
                 <Input value={basicInfo.classify} />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="IP地址">
-                <Input value={basicInfo.ip} />
+                <Input value={basicInfo.ip} readOnly />
             </Form.Item>
             <Form.Item label="操作系统">
-                <Input value={basicInfo.os_type} />
+                <Input value={ getOSName(basicInfo.os_type) } readOnly />
             </Form.Item>
             <Form.Item label="系统版本">
-                <Input value={basicInfo.os_ver} />
+                <Input value={basicInfo.os_ver} readOnly />
             </Form.Item>
             <Form.Item label="公钥">
                 <TextArea value={basicInfo.public_key} autoSize={{ minRows: 2, maxRows: 6 }} readOnly />

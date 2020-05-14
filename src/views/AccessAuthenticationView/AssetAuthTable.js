@@ -33,6 +33,8 @@ class AssetAuthTable extends React.Component {
             selectRowIndex: -1,
         }
 
+        this.queryAuthRecords();
+
         this.handleAssetSelectChange = this.handleAssetSelectChange.bind(this);
         this.setRowClassName = this.setRowClassName.bind(this);
     }
@@ -44,6 +46,31 @@ class AssetAuthTable extends React.Component {
     }
 
     handleResize = e => {
+    }
+
+    queryAuthRecordsCB = (data) => {
+        let authRecords = SimuAuthRecords.allAuths();
+        authRecords = [];
+
+        let records = data.payload.data;
+        for (let item of records) {
+            let authRecord = {
+                index: '' + (authRecords.length + 1),
+                name: item.asset.name, 
+                uuid: item.auth_uuid,
+                asset_uuid: item.asset_uuid,
+                ip: item.asset.ip, 
+                auth_result: item.authenticate_flag, 
+                auth_time: item.auth_time,
+            };
+            authRecords.push(authRecord);
+        }
+        
+        this.setState({ authRecords: authRecords });
+    }
+
+    queryAuthRecords() {
+        RestReq.asyncGet(this.queryAuthRecordsCB, '/embed-terminal/authenticate/authenticate-record');
     }
 
     /** 处理页面变化（页面跳转/切换/每页记录数变化） */
