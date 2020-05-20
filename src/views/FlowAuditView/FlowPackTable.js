@@ -7,23 +7,24 @@ import { WindowsFill } from '@ant-design/icons';
 import MAntdTable from '../../rlib/props/MAntdTable';
 import withStyles from '@material-ui/core/styles/withStyles';
 import SimNetPackets from '../../modules/simdata/SimNetPackets';
+import RestReq from '../../utils/RestReq';
 
 const { confirm } = Modal;
 
 export function getFlowPackByDay(day) {
     // message.error('每日统计--' + day);
-    MEvent.send('my_fetch_IP_packs', 1);
+    MEvent.send('my_fetch_asset_packs', 1);
 }
 
-export function getFlowPackByIP(ipAddr) {
+export function getFlowPackByAsset(asset_uuid) {
     // message.error('IP统计--' + ipAddr);
-    MEvent.send('my_fetch_IP_packs', 1);
+    MEvent.send('my_fetch_asset_packs', 'd6adc99a-2dd4-4402-8a86-4a8f0bdcfcd2');
 }
 
 function tableColumns() {
     let colsList = [
         { title: '序号', width: 60, dataIndex: 'index' },
-        { title: '时间', width: 160, dataIndex: 'parse_time', myNoWrap: true, mySort: true },
+        { title: '时间', width: 200, dataIndex: 'parse_time', myNoWrap: true, mySort: true },
         { title: '源IP', width: 160, dataIndex: 'source_ip', myNoWrap: true, mySort: true },
         { title: '源端口', width: 100, dataIndex: 'source_port', mySort: true },
         { title: '目的IP', width: 160, dataIndex: 'dest_ip', myNoWrap: true, mySort: true },
@@ -57,6 +58,7 @@ class FlowPackTable extends React.Component {
 
         this.state = {
             visible: visible,
+            asset: {},
             columns: tableColumns(),
             dataSource: SimNetPackets.allPackets(),
             pageSize: 10,
@@ -65,22 +67,77 @@ class FlowPackTable extends React.Component {
 
         };
 
-        this.handleFetchIPPacks = this.handleFetchIPPacks.bind(this);
+        this.handleFetchAssetPacks = this.handleFetchAssetPacks.bind(this);
         this.showTable = this.showTable.bind(this);
         this.hideTable = this.hideTable.bind(this);
         this.setRowClassName = this.setRowClassName.bind(this);
     }
 
-    handleFetchIPPacks(params) {
+    // allPackets() {
+    //     if (!global.simuData) {
+    //         return [];
+    //     }
+
+    //     _packsList = [];
+    //     for (let index=0; index < 100; index++ ) {
+    //         let pack = {
+    //             index: index + 1,
+    //             parse_time: this.randTime(),
+    //             direction: this.randDirection(),
+    //             transport_protocol: this.randTransP(),
+    //             app_protocol: this.randAppP(),
+    //             source_port: this.randPort(),
+    //             dest_port: this.randPort(),
+    //         }
+
+    //         if (pack['direction'] === 'IN') {
+    //             pack['source_ip'] = this.randIP();
+    //             pack['dest_ip'] = _def['LOCAL'];
+    //         } else {
+    //             pack['source_ip'] = _def['LOCAL'];
+    //             pack['dest_ip'] = this.randIP();
+    //         }
+
+    //         _packsList.push(pack);
+    //     }
+
+    //     return _packsList;
+    // }
+
+    fetchAssetPacksCB = (response) => {
+        let packsList = [];
+        let records = response.payload;
+        for (let index in records) {
+            let record = records[index];
+            let pack = {
+                index: parseInt(index) + 1,
+                parse_time: record.create_time,
+                direction: record.direction === '1' ? 'OUT' : 'IN',
+                transport_protocol: record.transport_protocol,
+                app_protocol: record.app_protocol === null ? '' : record.app_protocol,
+                source_ip: record.source_ip,
+                source_port: record.source_port,
+                dest_ip: record.dest_ip,
+                dest_port: record.dest_port,
+            }
+            packsList.push(pack);
+        }
+
+        this.setState({ dataSource: packsList });
         this.showTable();
     }
 
+    handleFetchAssetPacks(params) {
+        RestReq.asyncGet(this.fetchAssetPacksCB, '/embed-terminal/network/packet/get-datas', {}, { token: false });
+        // this.showTable();
+    }
+
     componentDidMount() {
-        MEvent.register('my_fetch_IP_packs', this.handleFetchIPPacks);
+        MEvent.register('my_fetch_asset_packs', this.handleFetchAssetPacks);
     }
 
     componentWillUnmount() {
-        MEvent.unregister('my_fetch_IP_packs', this.handleFetchIPPacks);
+        MEvent.unregister('my_fetch_asset_packs', this.handleFetchAssetPacks);
     }
 
     showTable() {

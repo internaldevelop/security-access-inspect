@@ -20,7 +20,8 @@ class PerformanceOverView extends React.Component {
         super(props);
         this.state = {
             assets: SimAssets.allAssets(),
-            stats: this.fetchVirtualStats(),
+            stats: this.initAssetStats(),
+            hasStats: false,
         };
 
         this.queryAssets();
@@ -75,13 +76,29 @@ class PerformanceOverView extends React.Component {
     }
 
     queryStatsCB = (response) => {
+        const { stats } = this.state;
+        let data = response.payload;
+        // 终端总数
+        stats[0].value = data.all_num;
+        // 白名单
+        stats[1].value = data.white_list_num;
+        // 黑名单
+        stats[2].value = data.blacklist_num;
+        // 在线
+        stats[3].value = data.on_line_num;
+        // 认证成功
+        stats[4].value = data.auth_num;
+        // 认证失败
+        stats[5].value = data.unprocessed_num;
+
+        this.setState({ stats, hasStats: true });
     }
 
     queryStats() {
-        // this.fetchVirtualStats();
+        RestReq.asyncGet(this.queryStatsCB, '/embed-terminal/assets/get-statistics', {}, { token: false });
     }
 
-    fetchVirtualStats() {
+    initAssetStats() {
         let stats = [];
         stats.push({ name: 'total', title: '终端总数', value: 129, icon: 'database', bgColor: '#DEF2DD', fgColor: 'black' });
         stats.push({ name: 'white_list', title: '白名单', value: 94, icon: 'like', bgColor: '#F3E6FA', fgColor: 'black' });
@@ -127,15 +144,19 @@ class PerformanceOverView extends React.Component {
             asset['last_pack_sent'] = packetsSent;
         }
 
-        let recvSpeed = (packetsRecv - asset['last_pack_recv']) * 1000 / (timeStamp - asset['last_time_stamp']);
+        let recvSpeed = (packetsRecv - asset['last_pack_recv']) * 1000.0 / (timeStamp - asset['last_time_stamp']);
         recvSpeed = MNumUtils.fixed(recvSpeed);
-        let sentSpeed = (packetsRecv - asset['last_pack_sent']) * 1000 / (timeStamp - asset['last_time_stamp']);
+        let sentSpeed = (packetsSent - asset['last_pack_sent']) * 1000.0 / (timeStamp - asset['last_time_stamp']);
         sentSpeed = MNumUtils.fixed(sentSpeed);
         let netUsage = {
             time: MTimeUtils.now(),
             data: [recvSpeed, sentSpeed]
         }
         MEvent.send('NET_' + asset.uuid, netUsage);
+
+        asset['last_pack_recv'] = packetsRecv;
+        asset['last_pack_sent'] = packetsSent;
+        asset['last_time_stamp'] = timeStamp;
 
         // this.setState({lastPacketsRecv: packetsRecv, lastPacketsSent: packetsSent, lastTimeStamp: timeStamp});
     }
@@ -159,19 +180,19 @@ class PerformanceOverView extends React.Component {
         // CPU 占用率
         let cpuUsage = {
             time: MTimeUtils.now(),
-            data: MNumUtils.fixed(assetInfo.CPU.systemCpuLoad * 100),
+            data: MNumUtils.fixed(assetInfo.CPU.usedPercentTotal),
         }
         asset['cpu_usage'] = cpuUsage;
         MEvent.send('CPU_' + asset.uuid, cpuUsage);
 
         // 内存 占用率
-        let memPercent = 1.0 * (assetInfo.Memory.total - assetInfo.Memory.available) / assetInfo.Memory.total;
-        memPercent = MNumUtils.fixed(memPercent, 4);
+        let memPercent = assetInfo.Memory.usedPercentTotal / 100.0;
+        // memPercent = MNumUtils.fixed(memPercent, 4);
         asset['mem_usage'] = memPercent;
         MEvent.send('MEMORY_' + asset.uuid, memPercent);
 
         // 磁盘占用率
-        let diskPercent = MNumUtils.fixed(assetInfo.Disks.usedPercentTotal / 100.0, 4); 
+        let diskPercent = assetInfo.Disks.usedPercentTotal / 100.0; 
         asset['disk_usage'] = diskPercent;
         MEvent.send('DISK_' + asset.uuid, diskPercent);
 
@@ -202,13 +223,13 @@ class PerformanceOverView extends React.Component {
     }
 
     render() {
-        const { stats } = this.state;
+        const { stats, hasStats } = this.state;
         let statSpan = 24 / stats.length;
         return (
             <div>
                 <Row gutter={20} style={{ marginBottom: 24 }}>
                     {stats.map((stat) => (<Col span={statSpan}>
-                        <MStatCardV3 myparams={stat} />
+                        {hasStats && <MStatCardV3 myparams={stat} />}
                     </Col>))}
                 </Row>
                 <Row gutter={24} >

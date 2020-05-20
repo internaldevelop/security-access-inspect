@@ -26,40 +26,25 @@ class AboutView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            sysInfoReady: false,
-            sysInfo: {},
-        }
-        // axios({
-        //     method: 'post',
-        //     url: 'https://www.easy-mock.com/mock/59801fd8a1d30433d84f198c/example/user/login',
-        //     data: {
-        //         uid: 1011,
-        //     }            
-        // })
-        // .then((data) => {
-        //     console.log(data);//输出返回的数据
-        // })
-        // axios.get('https://www.easy-mock.com/mock/59801fd8a1d30433d84f198c/example/user/all')
-        // .then((data) => {
-        //     console.log(data);//输出返回的数据
-        // })
-        // axios.post('https://www.easy-mock.com/mock/59801fd8a1d30433d84f198c/example/user/login', {uid: 1011})
-        // .then((data) => {
-        //     console.log(data);//输出返回的数据
-        // })
-        this.GetSystemInfo();
-    }
-
-    GetSystemInfoCB = (data) => {
-        this.setState({
-            sysInfo: data.payload,
             sysInfoReady: true,
-        });
+            sysInfo: this.GetSystemInfo(),
+        }
     }
 
     GetSystemInfo() {
-        let params = { sys_type: GetSystemType() };
-        HttpRequest.asyncGet(this.GetSystemInfoCB, '/embed-terminal/sysinfo/about', params);
+        let sysInfo = {
+            sysName: '电网嵌入式终端安全接入与检测工具',
+            desc: '电网嵌入式终端安全接入与检测模块，具备设备接入认证、实时监测、流量审计等安全功能，并在配电网监控系统或变电站自动化监控系统中进行试点应用。',
+            sysVer: '1.0.1.97',
+            copyright: 'Copyright ©2019-2022 中国电科院',
+            status: '运行中',
+            overview: '(1) 研究嵌入式终端接入身份认证技术，研制电网嵌入式终端安全接入模块，实现电网嵌入式终端安全接入身份认证。\n' +
+                '(2) 研究电网嵌入式终端运行状态检测技术，主要包括研究应用层通' +
+                '信流量状态、内存使用状态、CPU使用状态等运行状态。\n' +
+                '(3) 针对电网嵌入式终端设备通信安全，研究嵌入式终端通信流量监控与审计技术，研制电网嵌入式终端检测模块，具备实时监测、流量' +
+                '审计等安全功能，并在配电网监控系统或变电站自动化监控系统中进行试点应用。',
+        }
+        return sysInfo;
     }
 
     render() {
@@ -72,16 +57,11 @@ class AboutView extends React.Component {
                     <Row type="flex" justify="space-between">
                         <Col span={8} offset={8}>
                             <Card
-                                style={{ width: 450, margin: 8 }}
+                                style={{ width: 500, margin: 8 }}
                                 cover={<span style={{ textAlign: 'center' }}><img alt="systemicon" style={{ width: '40%', height: '40%' }} src={SystemImage} /></span>}
                             >
-                                {/* <Meta
-                                title={ sysInfo.sysName }
-                                description={ sysInfo.desc }
-                            /> */}
                                 <Card.Grid style={gridStyle}>
-                                    {/* <span style={{ color: 'blue', fontSize: '24px' }}>{sysInfo.sysName} <br /></span> */}
-                                    <span style={{ color: 'blue', fontSize: '24px' }}>{GetSystemName()} <br /></span>
+                                    <span style={{ color: 'blue', fontSize: '24px' }}>{sysInfo.sysName} <br /></span>
                                     <span style={{ textAlign: 'left' }}>{sysInfo.desc} <br /></span>
                                     <Divider dashed />
                                     {"系统版本: " + sysInfo.sysVer} <br />

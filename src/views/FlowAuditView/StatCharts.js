@@ -5,7 +5,7 @@ import MStatsPie from './MStatsPie';
 import MNumUtils from '../../rlib/utils/MNumUtils';
 import MAntdCard from '../../rlib/props/MAntdCard';
 
-import { getFlowPackByDay, getFlowPackByIP } from './FlowPackTable';
+import { getFlowPackByDay, getFlowPackByAsset } from './FlowPackTable';
 
 var rowHeight = 200;
 
@@ -32,24 +32,24 @@ export function totalPieByIO(dataSet) {
 
 export function outPieByIP(dataSet) {
     return (
-        <Card title={'上行数据'}
+        <Card title={'发送数据'}
             bodyStyle={{ minHeight: rowHeight }}
             headStyle={MAntdCard.headerStyle('emphasis')}
             extra={<div style={{ color: 'white', fontSize: 16 }}>点击图中扇形，解析指定IP地址的网络数据包</div>}
         >
-            <MStatsPie name={'上行'} dataSet={dataSet} extraParams={{ width: rowHeight, vertLegend: true, onClick: getFlowPackByIP }} />
+            <MStatsPie name={''} dataSet={dataSet} extraParams={{ width: rowHeight, vertLegend: true, onClick: getFlowPackByAsset }} />
         </Card>
     );
 }
 
 export function inPieByIP(dataSet) {
     return (
-        <Card title={'下行数据'}
+        <Card title={'接收数据'}
             bodyStyle={{ minHeight: rowHeight }}
             headStyle={MAntdCard.headerStyle('emphasis-2')}
             extra={<div style={{ color: 'white', fontSize: 16 }}>点击图中扇形，解析指定IP地址的网络数据包</div>}
         >
-            <MStatsPie name={''} dataSet={dataSet} extraParams={{ width: rowHeight, vertLegend: true, onClick: getFlowPackByIP }} />
+            <MStatsPie name={''} dataSet={dataSet} extraParams={{ width: rowHeight, vertLegend: true, onClick: getFlowPackByAsset }} />
         </Card>
     );
 }
@@ -61,7 +61,7 @@ export function statBarByIP(dataSet) {
             headStyle={MAntdCard.headerStyle('main-2')}
             extra={<div style={{ color: 'white', fontSize: 16 }}>点击条形图，解析指定IP地址的网络数据包</div>}
         >
-            <MStatsBar name={''} dataSet={dataSet} extraParams={{ height: rowHeight, onClick: getFlowPackByIP }} />
+            <MStatsBar name={''} dataSet={dataSet} extraParams={{ height: rowHeight, onClick: getFlowPackByAsset }} />
         </Card>
     );
 }

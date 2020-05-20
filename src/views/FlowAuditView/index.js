@@ -25,7 +25,7 @@ class FlowAuditView extends React.Component {
 
     fetchVirtualStats() {
         let stats = {};
-        stats['netIOTotal'] = [{ name: '下行', value: MNumUtils.rand(800) + 1120 }, { name: '上行', value: MNumUtils.rand(800) + 1120 }];
+        stats['netIOTotal'] = [{ name: '接收', value: MNumUtils.rand(800) + 1120 }, { name: '发送', value: MNumUtils.rand(800) + 1120 }];
 
         let outIPTotal = [];
         for (let index = 11; index <= 28; index++) {
@@ -39,13 +39,13 @@ class FlowAuditView extends React.Component {
         }
         stats['inIPTotal'] = inIPTotal;
 
-        let dayStat = [['flow', '下行（每日）', '上行（每日）'],];
+        let dayStat = [['flow', '接收（每日）', '发送（每日）'],];
         for (let index = 1; index <= 30; index++) {
             dayStat.push(['2020-8-' + index, MNumUtils.rand(800) + 20, MNumUtils.rand(1000) + 100])
         }
         stats['dayStat'] = dayStat;
 
-        let ipStat = [['flow', '下行-IP', '上行-IP'],];
+        let ipStat = [['flow', '接收', '发送'],];
         for (let index = 1; index <= 30; index++) {
             ipStat.push(['192.168.1.' + index, MNumUtils.rand(800) + 20, MNumUtils.rand(1000) + 100])
         }
@@ -68,7 +68,7 @@ class FlowAuditView extends React.Component {
                     <Col span={12}> {inPieByIP(stats['inIPTotal'])} </Col>
                 </Row>
                 <Row gutter={20} style={{ marginBottom: 24 }}>
-                    {statBarByDay(stats['dayStat'])}
+                    {/* {statBarByDay(stats['dayStat'])} */}
                 </Row>
 
                 {/* <Draggable defaultPosition={{x: 100, y: 0}}>

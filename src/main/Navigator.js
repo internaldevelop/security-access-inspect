@@ -33,15 +33,15 @@ const hostMenus = [
     //     icon: 'safety-certificate',
     //     key: '/home/fingerprint-management/',
     // },
-    {
-        title: '系统管理',
-        icon: 'setting',
-        key: '/home/sysadmin',
-        subs: [
-            { key: '/home/sysadmin/users', title: '用户管理', icon: 'contacts', },
-            { key: '/home/sysadmin/personal', title: '个人资料', icon: 'user', },
-        ]
-    },
+    // {
+    //     title: '系统管理',
+    //     icon: 'setting',
+    //     key: '/home/sysadmin',
+    //     subs: [
+    //         { key: '/home/sysadmin/users', title: '用户管理', icon: 'contacts', },
+    //         { key: '/home/sysadmin/personal', title: '个人资料', icon: 'user', },
+    //     ]
+    // },
     {
         title: '关于',
         icon: 'info-circle-o',
