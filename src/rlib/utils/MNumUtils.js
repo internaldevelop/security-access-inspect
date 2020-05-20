@@ -12,6 +12,18 @@ class MNumUtils {
                 break;
         }
     }
+
+    /**
+     * 截取小数点后几位（由 count 指定）
+     * @param {*} num 
+     * @param {*} count 
+     */
+    fixed(num, count = 2) {
+        let base = 1.0;
+        for (let i = 0; i < count; i++)
+            base *= 10.0;
+        return parseInt(num * base) / base;
+    }
 }
 
 export default new MNumUtils();

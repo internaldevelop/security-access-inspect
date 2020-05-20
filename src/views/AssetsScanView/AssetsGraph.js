@@ -30,12 +30,36 @@ export default class AssetsGraph extends React.Component {
         this.onClickScanAssets = this.onClickScanAssets.bind(this);
     }
 
+    componentDidMount() {
+        // 注册事件
+        MEvent.register('my_asset_classified', this.handleAssetClassified);
+    }
+
+    componentWillUnmount() {
+        // 注销事件
+        MEvent.unregister('my_asset_classified', this.handleAssetClassified);
+    }
+
+    handleAssetClassified = (assetCls) => {
+        const { assetBasicInfos } = this.state;
+
+        for (let item of assetBasicInfos) {
+            if (item.uuid === assetCls.uuid) {
+                item.name = assetCls.name;
+                item.classify = assetCls.classify;
+                this.setState({ assetBasicInfos });
+                return;
+            }
+        }
+    }
+
     queryBasicInfosCB = (data) => {
         let assetsArr = data.payload.data;
         let assetBasicInfos = assetsArr.map((asset, index) => {
             let basicInfo = DeepClone(asset);
             return basicInfo;
         })
+        // assetBasicInfos.splice(0,2);
 
         this.setState({ assetBasicInfos });
 
@@ -62,14 +86,14 @@ export default class AssetsGraph extends React.Component {
         detailInfo['plaintext'] = JSON.parse(payload['plaintext']);
         // console.log(detailInfo['plaintext']);
 
-        // detailInfo['fingerprint'] = JSON.parse(payload['dev_fingerprint']);
+        detailInfo['fingerprint'] = JSON.parse(payload['dev_fingerprint']);
 
         // 缓存设备详情
         assetDetailInfos.push(detailInfo);
         this.setState({ assetDetailInfos });
 
         // 发送事件给其它组件处理
-        MEvent.send('my_select_asset_detail_info', detailInfo);
+        MEvent.send('my_select_asset_fingerprint_info', detailInfo['fingerprint']);
     }
 
     fetchAsssetDetailInfo(assetUuid) {
@@ -168,7 +192,7 @@ export default class AssetsGraph extends React.Component {
         if (assetInfo.basicInfo.hasOwnProperty('uuid')) {
             // 查找到设备信息，发送事件给其它组件处理
             MEvent.send('my_select_asset_basic_info', assetInfo.basicInfo);
-            // MEvent.send('my_select_asset_detail_info', assetInfo.detailInfo);
+            // MEvent.send('my_select_asset_fingerprint_info', assetInfo.detailInfo);
         } else {
             // 设备信息列表中找不到该设备，又有事件产生，说明是虚拟设备
             if (event != null) {
@@ -179,7 +203,7 @@ export default class AssetsGraph extends React.Component {
 
         if (assetInfo.detailInfo.hasOwnProperty('uuid')) {
             // 查找到设备详情，发送事件给其它组件处理
-            MEvent.send('my_select_asset_detail_info', assetInfo.detailInfo);
+            MEvent.send('my_select_asset_fingerprint_info', assetInfo.detailInfo['fingerprint']);
         } else {
             // 未查到该设备，说明缓存中还没有该设备详情，调用后台接口获取设备详情
             this.fetchAsssetDetailInfo(assetUuid);

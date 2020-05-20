@@ -6,16 +6,16 @@ import Link from '@material-ui/core/Link';
 
 const Panel = Collapse.Panel;
 
-export function renderAssetInfo(assetInfo) {
+export function renderAssetInfo(fpInfo) {
     let system;
     return (
         <Collapse accordion defaultActiveKey='System'>
-            {assetComputerSysInfo(assetInfo)}
-            {assetGeneralInfo(assetInfo)}
-            {assetCpuInfo(assetInfo)}
-            {assetMenInfo(assetInfo.Memory, assetInfo.Swap)}
-            {assetNetworkInfo(assetInfo)}
-            {assetDiskInfo(assetInfo)}
+            {assetComputerSysInfo(fpInfo)}
+            {assetGeneralInfo(fpInfo)}
+            {assetCpuInfo(fpInfo)}
+            {assetMenInfo(fpInfo)}
+            {assetNetworkInfo(fpInfo)}
+            {assetDiskInfo(fpInfo)}
         </Collapse>
     );
 
@@ -36,14 +36,14 @@ const systemInfoItems = [
     { name: 'user.timezone', desc: '用户时区' },
 ];
 
-function assetGeneralInfo(assetInfo) {
+function assetGeneralInfo(fpInfo) {
 
-    if (assetInfo.hasOwnProperty('sys_type') && (assetInfo['sys_type'] !== null)) {
+    if (fpInfo.hasOwnProperty('sys_type') && (fpInfo['sys_type'] !== null)) {
         return (
             <Panel header={'操作系统'} key={'system'}>
-                {tagInfo('系统类型', assetInfo.sys_type)}
-                {tagInfo('系统名称', assetInfo.sys_name)}
-                {tagInfo('系统版本', assetInfo.sys_version)}
+                {tagInfo('系统类型', fpInfo.sys_type)}
+                {tagInfo('系统名称', fpInfo.sys_name)}
+                {tagInfo('系统版本', fpInfo.sys_version)}
             </Panel>
         );
     } else {
@@ -54,10 +54,10 @@ function assetGeneralInfo(assetInfo) {
     }
 }
 
-function assetComputerSysInfo(assetInfo) {
+function assetComputerSysInfo(fpInfo) {
 
-    if (assetInfo.hasOwnProperty('ComputerSystem') && (assetInfo['ComputerSystem'] !== null)) {
-        let hwSys = assetInfo['ComputerSystem'];
+    if (fpInfo.hasOwnProperty('ComputerSystem') && (fpInfo['ComputerSystem'] !== null)) {
+        let hwSys = fpInfo['ComputerSystem'];
         return (
             <Panel header={'硬件系统'} key={'ComputerSystem'}>
                 {tagInfo('型号', hwSys.model)}
@@ -79,9 +79,9 @@ function assetComputerSysInfo(assetInfo) {
     }
 }
 
-function assetCpuInfo(assetInfo) {
-    if (assetInfo.hasOwnProperty('CPU') && (assetInfo['CPU'] !== null)) {
-        let cpuInfo = assetInfo['CPU'];
+function assetCpuInfo(fpInfo) {
+    if (fpInfo.hasOwnProperty('CPU') && (fpInfo['CPU'] !== null)) {
+        let cpuInfo = fpInfo['CPU'];
         return (
             <Panel header={'CPU信息'} key={'CPUInfo'}>
                 {tagInfo('CPU', cpuInfo.name)}
@@ -93,8 +93,8 @@ function assetCpuInfo(assetInfo) {
                 {tagInfo('CPU族', cpuInfo.family)}
                 {tagInfo('标识', cpuInfo.identifier)}
                 {tagInfo('64位', cpuInfo.cpu64bit ? '是' : '否')}
-                {tagInfo('物理数量', cpuInfo.physicalProcessorCount)}
-                {tagInfo('逻辑数量', cpuInfo.logicalProcessorCount)}
+                {tagInfo('物理核数', cpuInfo.physicalProcessorCount + '核')}
+                {tagInfo('逻辑核数', cpuInfo.logicalProcessorCount + '核')}
             </Panel>
         );
     } else {
@@ -131,33 +131,49 @@ function formatPercent(percent) {
     return percent.toFixed(2) + '%';
 }
 
-function assetMenInfo(memInfo, swapInfo) {
-    if (typeof (memInfo) === 'undefined' || memInfo === null ||
-        typeof (swapInfo) === 'undefined' || swapInfo === null) {
+function assetMenInfo(fpInfo) {
+    if (fpInfo.hasOwnProperty('Memory') && (fpInfo['Memory'] !== null)) {
+        let memInfo = fpInfo['Memory'];
         return (
-            <Panel header={'内存信息获取失败'} key={'Memory'}>
+            <Panel header={'内存信息'} key={'Memory'}>
+                {tagInfo('内存总量', formatCapacity(memInfo.total))}
+                {tagInfo('交换区', formatCapacity(memInfo.swapTotal))}
+                {tagInfo('页大小', formatCapacity(memInfo.pageSize))}
+                {tagInfo('换出页', formatCapacity(memInfo.swapPagesOut))}
             </Panel>
         );
     } else {
         return (
-            <Panel header={'内存信息'} key={'Memory'}>
-                {tagInfo('内存总量', formatCapacity(memInfo.total))}
-                {tagInfo('已用内存', formatCapacity(memInfo.actualUsed))}
-                {tagInfo('空闲内存', formatCapacity(memInfo.actualFree))}
-                {tagInfo('已用占比', formatPercent(memInfo.usedPercent))}
-                {tagInfo('空闲占比', formatPercent(memInfo.freePercent))}
-                {tagInfo('交换区总量', formatCapacity(swapInfo.total))}
-                {tagInfo('已用交换区', formatCapacity(swapInfo.used))}
-                {tagInfo('空闲交换区', formatCapacity(swapInfo.free))}
+            <Panel header={'内存信息获取失败'} key={'Memory'}>
             </Panel>
         );
     }
+    // if (typeof (memInfo) === 'undefined' || memInfo === null ||
+    //     typeof (swapInfo) === 'undefined' || swapInfo === null) {
+    //     return (
+    //         <Panel header={'内存信息获取失败'} key={'Memory'}>
+    //         </Panel>
+    //     );
+    // } else {
+    //     return (
+    //         <Panel header={'内存信息'} key={'Memory'}>
+    //             {tagInfo('内存总量', formatCapacity(memInfo.total))}
+    //             {tagInfo('已用内存', formatCapacity(memInfo.actualUsed))}
+    //             {tagInfo('空闲内存', formatCapacity(memInfo.actualFree))}
+    //             {tagInfo('已用占比', formatPercent(memInfo.usedPercent))}
+    //             {tagInfo('空闲占比', formatPercent(memInfo.freePercent))}
+    //             {tagInfo('交换区总量', formatCapacity(swapInfo.total))}
+    //             {tagInfo('已用交换区', formatCapacity(swapInfo.used))}
+    //             {tagInfo('空闲交换区', formatCapacity(swapInfo.free))}
+    //         </Panel>
+    //     );
+    // }
 }
 
 function netCardInfo(netCard, index) {
     let netName = '网络' + (index + 1);
     return (
-        <div>
+        <div key={netCard.macAddress}>
             {tagInfo(netName + '名称', netCard.netWorkName)}
             {tagInfo(netName + ' MAC', netCard.macAddress)}
             {tagInfo(netName + '速度', netCard.speed)}
@@ -167,9 +183,9 @@ function netCardInfo(netCard, index) {
     );
 }
 
-function assetNetworkInfo(assetInfo) {
-    if (assetInfo.hasOwnProperty('Network') && (assetInfo['Network'] !== null)) {
-        let networkInfo = assetInfo['Network'];
+function assetNetworkInfo(fpInfo) {
+    if (fpInfo.hasOwnProperty('Network') && (fpInfo['Network'] !== null)) {
+        let networkInfo = fpInfo['Network'];
         return (
             <Panel header={'网络信息'} key={'Network'}>
                 {networkInfo.map((netCard, index) => netCardInfo(netCard, index))}
@@ -183,16 +199,35 @@ function assetNetworkInfo(assetInfo) {
     }
 }
 
-function assetDiskInfo(assetInfo) {
-    if (assetInfo.hasOwnProperty('Disk') && (assetInfo['Disk'] !== null)) {
-        let diskInfo = assetInfo['Disk'];
+function fileStoreInfo(fileStore, index) {
+    let fsName = '存储' + (index + 1);
+    return (
+        <div key={fileStore.volume}>
+            {tagInfo(fsName + '卷标', fileStore.volume)}
+            {tagInfo(fsName + '名称', fileStore.name)}
+            {tagInfo(fsName + '描述', fileStore.description)}
+            {tagInfo(fsName + '类型', fileStore.type)}
+            {tagInfo(fsName + '挂载', fileStore.mount)}
+            {tagInfo(fsName + ' UUID', fileStore.uUID)}
+            <Divider />
+        </div>
+    );
+}
+
+function assetDiskInfo(fpInfo) {
+    if (fpInfo.hasOwnProperty('Disks') && (fpInfo['Disks'] !== null)) {
+        let diskInfo = fpInfo['Disks'];
+        let fileStores = diskInfo['fileStores'];
         return (
-            <Panel header={'磁盘信息'} key={'DiskInfo'}>
+            <Panel header={'存储信息'} key={'DiskInfo'}>
+                {tagInfo('总容量', formatCapacity(diskInfo.allTotal))}
+                <Divider />
+                {fileStores.map((fileStore, index) => fileStoreInfo(fileStore, index))}
             </Panel>
         );
     } else {
         return (
-            <Panel header={'磁盘信息获取失败'} key={'DiskInfo'}>
+            <Panel header={'存储信息获取失败'} key={'DiskInfo'}>
             </Panel>
         );
     }

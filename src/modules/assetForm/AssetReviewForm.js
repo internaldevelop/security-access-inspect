@@ -1,8 +1,9 @@
 import React from 'react'
-import { Card, Radio, Form, Button, Switch, Input, Col, Tabs, Popconfirm } from 'antd'
+import { Card, Radio, Form, Button, Input, Modal } from 'antd'
 import MAntdCard from '../../rlib/props/MAntdCard';
 import MEvent from '../../rlib/utils/MEvent';
-import { AssetClass, AssetStatus, getAssetClass, getCateIndex, getCateIndexByClass, getCateIndexByStatus } from '../../modules/assetForm/AssetStatus'
+import { AssetClass } from '../../modules/assetForm/AssetStatus'
+import RestReq from '../../utils/RestReq';
 
 export default class AssetReviewForm extends React.Component {
     constructor(props) {
@@ -16,6 +17,8 @@ export default class AssetReviewForm extends React.Component {
         this.onClickAssetClass3 = this.onClickAssetClass3.bind(this);
         this.onClickAssetClass4 = this.onClickAssetClass4.bind(this);
         this.onChangeName = this.onChangeName.bind(this);
+        this.saveAssetClass = this.saveAssetClass.bind(this);
+        this.saveAssetClassCB = this.saveAssetClassCB.bind(this);
     }
 
     componentDidMount() {
@@ -33,12 +36,30 @@ export default class AssetReviewForm extends React.Component {
         this.setState({ assetName: basicInfo.name, assetClass: basicInfo.classify, assetUuid: basicInfo.uuid });
     }
 
-    saveAssetClass = () => {
+    saveAssetClassCB(response) {
+        if (response.code !== 'ERROR_OK') {
+            Modal.error({ title: '', content: '对终端授信分类失败，请检查资产状态是否异常'});
+            // return;
+        }
+
+        // 将新的资产名和分类，发送事件给其它组件以更新数据
+        const { assetUuid, assetClass, assetName } = this.state;
+        let assetCls = { uuid: assetUuid, name: assetName, classify: assetClass };
+        MEvent.send('my_asset_classified', assetCls);
+    }
+
+    saveAssetClass() {
+        const { assetUuid, assetClass, assetName } = this.state;
+        // RestReq.asyncGet(this.saveAssetClassCB, '/embed-terminal/authenticate/to-review', { asset_uuid: assetUuid, classify: assetClass,  }, { token: false });
+        RestReq.asyncGet(this.saveAssetClassCB, '/embed-terminal/authenticate/to-review',
+            { asset_uuid: assetUuid, classify: '' + assetClass, asset_name: assetName },
+            { alwaysCallBack: true }
+        );
     }
 
     getExtra() {
         return (<div>
-            <Button style={{ backgroundColor: '#fff7e6', color: '#610b00' }}>保存</Button>
+            <Button style={{ backgroundColor: '#fff7e6', color: '#610b00' }} onClick={this.saveAssetClass}>保存</Button>
         </div>);
     }
 
@@ -90,7 +111,7 @@ export default class AssetReviewForm extends React.Component {
             // size={componentSize}
             >
                 <Form.Item label="终端命名">
-                    <Input value={assetName} onChange={this.onChangeName}/>
+                    <Input value={assetName} onChange={this.onChangeName} />
                 </Form.Item>
                 <Form.Item label="审核">
                     <Radio.Group value={assetClass} buttonStyle="solid">

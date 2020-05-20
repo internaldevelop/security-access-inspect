@@ -7,6 +7,7 @@ import AuthDetails from '../../modules/assetForm/AuthDetails';
 import MAntdCard from '../../rlib/props/MAntdCard';
 import authResultTag from '../../modules/antdComponents/AuthResultTag';
 import MTest from '../../rlib/utils/MTest';
+import RestReq from '../../utils/RestReq';
 
 class AuthRecordInfo extends React.Component {
     constructor(props) {
@@ -29,16 +30,59 @@ class AuthRecordInfo extends React.Component {
 
     handleSelectAuthRecord = (authUuid) => {
         let authRecord = SimuAuthRecords.getAuthRecord(authUuid);
-        MEvent.send('my_auth_details_info', authRecord);
+        if (authRecord.hasOwnProperty('uuid')) {
+            // 模拟代码，找到虚拟认证记录，发送虚拟认证记录信息
+            MEvent.send('my_auth_details_info', authRecord);
+            this.setState({ authUuid, authRecord });
+        } else {
+            // 获取真实认证记录信息
+            this.fetchAuthInfo(authUuid);
+            this.setState({ authUuid });
+        }
 
-        this.setState({ authUuid, authRecord });
+    }
+
+    fetchAuthInfoCB = (response) => {
+        let record = response.payload;
+        let asset = record.asset;
+
+        // 发送更新设备信息的消息
+        let assetBasicInfo = {
+            uuid: asset.uuid, name: asset.name, classify: asset.classify,
+            ip: asset.ip, os_type: asset.os_type, os_ver: asset.os_ver,
+            public_key: record.public_key,
+        };
+        MEvent.send('my_select_asset_basic_info', assetBasicInfo);
+
+        // 发送更新认证记录的消息
+        let authRecord = {
+            signature: record.signature,
+            pub_key: record.public_key,
+            plain_text: record.plaintext,
+            cipher_text: record.ciphertext,
+            sym_key: record.sym_key,
+            auth_uuid: record.auth_uuid,
+            asset_uuid: record.asset_uuid,
+            auth_result: record.authenticate_flag,
+            dev_fingerprint: record.dev_fingerprint,
+            auth_time: record.auth_time,
+        };
+        MEvent.send('my_auth_details_info', authRecord);
+        this.setState({ authRecord });
+    }
+
+    fetchAuthInfo(authUuid) {
+        RestReq.asyncGet(this.fetchAuthInfoCB, '/embed-terminal/authenticate/authenticate-record-info', { auth_uuid: authUuid });
     }
 
     getExtra() {
         const { authRecord } = this.state;
         let status = authRecord.auth_result;
 
-        return authResultTag(status);
+        return (<div>
+            {authResultTag(status)}
+            {authResultTag(status, true)}
+            </div>);
     }
 
     render() {

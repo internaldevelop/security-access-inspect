@@ -16,15 +16,24 @@ export default class AssetBasicInfo extends React.Component {
     componentDidMount() {
         // 注册事件
         MEvent.register('my_select_asset_basic_info', this.handleSelectAsset);
+        MEvent.register('my_asset_classified', this.handleAssetClassified);
     }
 
     componentWillUnmount() {
         // 注销事件
         MEvent.unregister('my_select_asset_basic_info', this.handleSelectAsset);
+        MEvent.unregister('my_asset_classified', this.handleAssetClassified);
     }
 
     handleSelectAsset = (basicInfo) => {
         console.log(basicInfo);
+        this.setState({ basicInfo });
+    }
+
+    handleAssetClassified = (assetCls) => {
+        const { basicInfo } = this.state;
+        basicInfo.name = assetCls.name;
+        basicInfo.classify = assetCls.classify;
         this.setState({ basicInfo });
     }
 

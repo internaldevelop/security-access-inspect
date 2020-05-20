@@ -132,7 +132,8 @@ function _addSimulateAssets(options) {
         let asset = assetsList[index];
         let category = getCateIndex(asset.cls, asset.status);
 
-        let totalCount = seriesData.push({ name: asset.name, category: category, value: '' + 100 * category + index });
+        let id = '' + 100 * category + index;
+        let totalCount = seriesData.push({ id: id, name: asset.name, category: category, value: id });
         seriesLinks.push({
             source: 0,
             target: totalCount - 1,
@@ -142,23 +143,23 @@ function _addSimulateAssets(options) {
     }
 }
 
-function _addSimulateAssets2(options, edgesNameList, assetClass, assetStatus) {
-    let seriesData = options.series[0].data;
-    let seriesLinks = options.series[0].links;
+// function _addSimulateAssets2(options, edgesNameList, assetClass, assetStatus) {
+//     let seriesData = options.series[0].data;
+//     let seriesLinks = options.series[0].links;
 
-    let category = getCateIndex(assetClass, assetStatus);
+//     let category = getCateIndex(assetClass, assetStatus);
 
-    for (let index in edgesNameList) {
-        let edgeName = edgesNameList[index];
-        let totalCount = seriesData.push({ name: edgeName, category: category, value: '' + 100 * category + index });
-        seriesLinks.push({
-            source: 0,
-            target: totalCount - 1,
-            category: category,
-            value: ''
-        });
-    }
-}
+//     for (let index in edgesNameList) {
+//         let edgeName = edgesNameList[index];
+//         let totalCount = seriesData.push({ name: edgeName, category: category, value: '' + 100 * category + index });
+//         seriesLinks.push({
+//             source: 0,
+//             target: totalCount - 1,
+//             category: category,
+//             value: ''
+//         });
+//     }
+// }
 
 function selectCats(options, catsList) {
     let selected = options.legend.selected;
@@ -230,7 +231,7 @@ function _addAsset(options, asset) {
     let category = getCateIndex(assetClass, assetStatus);
 
     // graph 中添加 edge
-    let totalCount = seriesData.push({ name: asset.name, category: category, value: asset.uuid });
+    let totalCount = seriesData.push({ id: asset.uuid, name: asset.name, category: category, value: asset.uuid });
     // graph 中添加 path
     seriesLinks.push({
         source: 0,
@@ -243,6 +244,18 @@ function _addAsset(options, asset) {
 
 export function getGraphOptions(assetsList, assetClass, assetStatus) {
     getSimulateOptions(assetClass, assetStatus);
+
+    // if (assetsList.length > 0) {
+    //     // _addAsset(options, assetsList[0]);
+    //     let totalCount = assetsList.length;
+    //     for (let index in assetsList) {
+    //         if (index > 4)
+    //             break;
+    //         let asset = assetsList[index];
+    //         _addAsset(options, asset);
+    //     }
+    // }
+
     for (let asset of assetsList) {
         _addAsset(options, asset);
     }

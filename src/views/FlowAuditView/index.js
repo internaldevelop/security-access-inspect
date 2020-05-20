@@ -1,5 +1,6 @@
 import React from 'react'
 import { Row, Col, Card } from 'antd';
+import Draggable from 'react-draggable';
 import MStatsBar from './MStatsBar';
 import MStatsPie from './MStatsPie';
 import MNumUtils from '../../rlib/utils/MNumUtils';
@@ -59,7 +60,7 @@ class FlowAuditView extends React.Component {
         return (
             <div>
                 <Row gutter={20} style={{ marginBottom: 24 }}>
-                    <Col span={18}> {statBarByDay(stats['dayStat'])} </Col>
+                    <Col span={18}> {statBarByIP(stats['ipStat'])} </Col>
                     <Col span={6}> {totalPieByIO(stats['netIOTotal'])} </Col>
                 </Row>
                 <Row gutter={20} style={{ marginBottom: 24 }}>
@@ -67,8 +68,12 @@ class FlowAuditView extends React.Component {
                     <Col span={12}> {inPieByIP(stats['inIPTotal'])} </Col>
                 </Row>
                 <Row gutter={20} style={{ marginBottom: 24 }}>
-                    {statBarByIP(stats['ipStat'])}
+                    {statBarByDay(stats['dayStat'])}
                 </Row>
+
+                {/* <Draggable defaultPosition={{x: 100, y: 0}}>
+                    <div style={{ top: 20 }}>I can now be moved around!</div>
+                </Draggable> */}
                 <FlowPackTable />
             </div>
         );

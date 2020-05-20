@@ -1,16 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types';
-
 import { Row, Col } from 'antd';
-
 import MEvent from '../../rlib/utils/MEvent';
 import MStatCardV3 from '../../rlib/antdComponents/MStatCardV3';
 import PerformMonitorView from './PerformMonitorView';
 import SimAssets from '../../modules/simdata/SimAssets';
 import MTimeUtils from '../../rlib/utils/MTimeUtils';
 import MNumUtils from '../../rlib/utils/MNumUtils';
+import RestReq from '../../utils/RestReq';
+import { OpenSocket, CloseSocket } from '../../utils/WebSocket';
+import { sockMsgType } from '../../global/enumeration/SockMsgType'
 
 let l_timer3S = undefined;    // 3秒的定时器
+let l_socket = null;
+
 
 class PerformanceOverView extends React.Component {
     constructor(props) {
@@ -20,9 +23,27 @@ class PerformanceOverView extends React.Component {
             stats: this.fetchVirtualStats(),
         };
 
-        this.fetchVirtualStats();
+        this.queryAssets();
 
-        this.startSimulateTimer();
+        this.queryStats();
+
+        // this.startSimulateTimer();
+        this.processAssetRealTimeInfo = this.processAssetRealTimeInfo.bind(this);
+    }
+
+    queryAssetsCB = (response) => {
+        let data = response.payload.data;
+        if (typeof (data) === 'undefined') {
+            return;
+        }
+
+        let assetsList = data.map((item) => { return { uuid: item.uuid, classify: item.classify, name: item.name, onLine: parseInt(item.on_line) }; });
+        this.setState({ assets: assetsList });
+    }
+
+    queryAssets() {
+        // flag: 1, 表示不需要返回指纹信息
+        RestReq.asyncGet(this.queryAssetsCB, '/embed-terminal/assets/get-assets', { flag: '' + 1 });
     }
 
     timer3sProcess = () => {
@@ -37,11 +58,11 @@ class PerformanceOverView extends React.Component {
 
             let netUsage = {
                 time: MTimeUtils.now(),
-                data: [MNumUtils.rand(10)+20, MNumUtils.rand(30) + 20]
+                data: [MNumUtils.rand(10) + 20, MNumUtils.rand(30) + 20]
             }
             MEvent.send('NET_' + assets[index].uuid, netUsage);
 
-            let memPercent = MNumUtils.rand(80)+20;
+            let memPercent = MNumUtils.rand(80) + 20;
             MEvent.send('MEMORY_' + assets[index].uuid, memPercent / 100.0);
             let diskPercent = MNumUtils.rand(100);
             MEvent.send('DISK_' + assets[index].uuid, diskPercent / 100.0);
@@ -51,6 +72,13 @@ class PerformanceOverView extends React.Component {
     startSimulateTimer = () => {
         // 开启3秒的定时器
         l_timer3S = setInterval(() => this.timer3sProcess(), 3000);
+    }
+
+    queryStatsCB = (response) => {
+    }
+
+    queryStats() {
+        // this.fetchVirtualStats();
     }
 
     fetchVirtualStats() {
@@ -66,15 +94,115 @@ class PerformanceOverView extends React.Component {
     }
 
     componentDidMount() {
+        l_socket = OpenSocket('asset_info', this.processAssetRealTimeInfo);
     }
 
     componentWillUnmount() {
         if (l_timer3S !== undefined)
             clearInterval(l_timer3S);
+
+        CloseSocket(l_socket);
+    }
+
+    processAssetNetFlowInfo(asset, netInfo) {
+        if (!asset.hasOwnProperty('hasLastNetInfo')) {
+            asset['last_pack_recv'] = -1;
+            asset['last_pack_sent'] = -1;
+            asset['last_time_stamp'] = 1;
+            asset['hasLastNetInfo'] = true;
+        }
+        // let asset_uuid = '';
+        // let lastPacketsRecv = -1;
+        // let lastPacketsSent = -1;
+        // let lastTimeStamp = 1;
+
+        let packetsRecv = netInfo.packetsRecv;
+        let packetsSent = netInfo.packetsSent;
+        let timeStamp = netInfo.timeStamp;
+
+        if (asset['last_pack_recv'] < 0) {
+            asset['last_pack_recv'] = packetsRecv;
+        }
+        if (asset['last_pack_sent'] < 0) {
+            asset['last_pack_sent'] = packetsSent;
+        }
+
+        let recvSpeed = (packetsRecv - asset['last_pack_recv']) * 1000 / (timeStamp - asset['last_time_stamp']);
+        recvSpeed = MNumUtils.fixed(recvSpeed);
+        let sentSpeed = (packetsRecv - asset['last_pack_sent']) * 1000 / (timeStamp - asset['last_time_stamp']);
+        sentSpeed = MNumUtils.fixed(sentSpeed);
+        let netUsage = {
+            time: MTimeUtils.now(),
+            data: [recvSpeed, sentSpeed]
+        }
+        MEvent.send('NET_' + asset.uuid, netUsage);
+
+        // this.setState({lastPacketsRecv: packetsRecv, lastPacketsSent: packetsSent, lastTimeStamp: timeStamp});
+    }
+
+    processAssetRealTimeInfo(data) {
+        const { assets, lastNetInfoList } = this.state;
+
+        // WebSocket 推送的实时信息是 JSON 字符串格式
+        let message = JSON.parse(data);
+        // 检查消息类型
+        // if (message.type !== sockMsgType.ASSET_REAL_TIME_INFO)
+        if (message.type !== sockMsgType.SINGLE_TASK_RUN_INFO)
+            return;
+
+        // 从资产 UUID 获取资产对象
+        let assetInfo = message.payload;
+        let asset = this.findAsset(assetInfo.asset_uuid);
+        if (asset === null)
+            return;
+        
+        // CPU 占用率
+        let cpuUsage = {
+            time: MTimeUtils.now(),
+            data: MNumUtils.fixed(assetInfo.CPU.systemCpuLoad * 100),
+        }
+        asset['cpu_usage'] = cpuUsage;
+        MEvent.send('CPU_' + asset.uuid, cpuUsage);
+
+        // 内存 占用率
+        let memPercent = 1.0 * (assetInfo.Memory.total - assetInfo.Memory.available) / assetInfo.Memory.total;
+        memPercent = MNumUtils.fixed(memPercent, 4);
+        asset['mem_usage'] = memPercent;
+        MEvent.send('MEMORY_' + asset.uuid, memPercent);
+
+        // 磁盘占用率
+        let diskPercent = MNumUtils.fixed(assetInfo.Disks.usedPercentTotal / 100.0, 4); 
+        asset['disk_usage'] = diskPercent;
+        MEvent.send('DISK_' + asset.uuid, diskPercent);
+
+        // 网络包收发速度
+        this.processAssetNetFlowInfo(asset, assetInfo.NewworkObj);
+
+        this.setState({ assets });
+    }
+
+    findAsset(assetUuid) {
+        for (let asset of this.state.assets) {
+            if (asset.uuid === assetUuid) {
+                return asset;
+            }
+        }
+        return null;
+    }
+
+    renderMonitorView() {
+        const { assets } = this.state;
+        let comps = [];
+        for (let asset of assets) {
+            if (asset.onLine) {
+                comps.push(<Col span={12}> <PerformMonitorView title={asset.name} uuid={asset.uuid} /> </Col>);
+            }
+        }
+        return comps;
     }
 
     render() {
-        const { stats, assets } = this.state;
+        const { stats } = this.state;
         let statSpan = 24 / stats.length;
         return (
             <div>
@@ -85,9 +213,10 @@ class PerformanceOverView extends React.Component {
                 </Row>
                 <Row gutter={24} >
                     <div style={{ overflow: 'scroll', minWidth: 800, height: 850 }}>
-                        {assets.map((asset, index) => (<Col span={12}>
+                        {this.renderMonitorView()}
+                        {/* {assets.map((asset, index) => (<Col span={12}>
                             <PerformMonitorView title={asset.name} uuid={asset.uuid}/>
-                        </Col>))}
+                        </Col>))} */}
                     </div>
                 </Row>
             </div>

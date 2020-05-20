@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Table, Modal, Button } from 'antd'
+import Draggable from 'react-draggable';
+import AntdDraggableModal from 'antd-draggable-modal';
 import MEvent from '../../rlib/utils/MEvent';
 import { WindowsFill } from '@ant-design/icons';
 import MAntdTable from '../../rlib/props/MAntdTable';
@@ -100,29 +102,78 @@ class FlowPackTable extends React.Component {
         this.setState({ currentPage, pageSize });
     }
 
+    render1() {
+        const { visible, dataSource, columns } = this.state;
+        let self = this;
+        // return (<Draggable>
+        //     <div style={{ top: 20}}>I can now be moved around!</div>
+        //   </Draggable>);
+        return (<div>
+            <Draggable>
+                {/* <AntdDraggableModal
+            title="流量包解析"
+            visible={visible}
+            width={1200}
+            style={{ top: 20 }}
+            closable
+            onCancel={this.hideTable}
+            footer={[<Button key="submit" type="primary" onClick={this.hideTable}> 关闭 </Button>]}
+        // onOk={this.handleOk}
+        //     onCancel={this.handleCancel}
+          > */}
+
+                <Modal
+                    title="流量包解析"
+                    visible={visible}
+                    width={1200}
+                    style={{ top: 20 }}
+                    closable
+                    onCancel={this.hideTable}
+                    footer={[<Button key="submit" type="primary" onClick={this.hideTable}> 关闭 </Button>]}
+                >
+                    <Table
+                        columns={columns}
+                        dataSource={dataSource}
+                        bordered={true}
+                        rowKey={record => record.uuid}
+                        rowClassName={this.setRowClassName}
+                        // onRow={this.onRow}
+                        pagination={MAntdTable.pagination(self.handlePageChange)}
+                    />
+                </Modal>
+                {/* </AntdDraggableModal> */}
+            </Draggable>
+        </div>);
+    }
+
+
     render() {
         const { visible, dataSource, columns } = this.state;
         let self = this;
+        // return (<Draggable>
+        //     <div style={{ top: 20}}>I can now be moved around!</div>
+        //   </Draggable>);
         return (<div>
-            <Modal
-                title="流量包解析"
-                visible={visible}
-                width={1200}
-                style={{ top: 20 }}
-                closable
-                onCancel={this.hideTable}
-                footer={[<Button key="submit" type="primary" onClick={this.hideTable}> 关闭 </Button>]}
-            >
-                <Table
-                    columns={columns}
-                    dataSource={dataSource}
-                    bordered={true}
-                    rowKey={record => record.uuid}
-                    rowClassName={this.setRowClassName}
-                    // onRow={this.onRow}
-                    pagination={MAntdTable.pagination(self.handlePageChange)}
-                />
-            </Modal>
+            {visible && (
+                <AntdDraggableModal
+                    title="流量包解析"
+                    visible={visible}
+                    width={1200}
+                    style={{ top: 20 }}
+                    closable
+                    onCancel={this.hideTable}
+                    footer={[<Button key="submit" type="primary" onClick={this.hideTable}> 关闭 </Button>]}
+                >
+                    <Table
+                        columns={columns}
+                        dataSource={dataSource}
+                        bordered={true}
+                        rowKey={record => record.uuid}
+                        rowClassName={this.setRowClassName}
+                        // onRow={this.onRow}
+                        pagination={MAntdTable.pagination(self.handlePageChange)}
+                    />
+                </AntdDraggableModal>)}
         </div>);
     }
 }

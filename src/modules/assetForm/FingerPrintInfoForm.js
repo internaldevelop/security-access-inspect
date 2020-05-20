@@ -14,28 +14,28 @@ export default class FingerPrintInfoForm extends React.Component {
         super(props);
         this.state = {
             showConfig: false,
-            detailInfo: {},
-            fingerPrint: '',
+            fingerPrint: {},
+            fpEncodeStr: '',
         }
     }
 
     componentDidMount() {
         // 注册事件
-        MEvent.register('my_select_asset_detail_info', this.handleSelectAsset);
+        MEvent.register('my_select_asset_fingerprint_info', this.handleSelectAsset);
     }
 
     componentWillUnmount() {
         // 注销事件
-        MEvent.unregister('my_select_asset_detail_info', this.handleSelectAsset);
+        MEvent.unregister('my_select_asset_fingerprint_info', this.handleSelectAsset);
     }
 
-    handleSelectAsset = (detailInfo) => {
-        // console.log(detailInfo);
-        if (global.simuData) {
-            detailInfo = SimFingerPrint.getFP('');
-        }
-        let fingerPrint = Base64.encode(JSON.stringify(detailInfo));
-        this.setState({ detailInfo: detailInfo, fingerPrint: fingerPrint });
+    handleSelectAsset = (fingerPrint) => {
+        // console.log(fingerPrint);
+        // if (global.simuData) {
+        //     fingerPrint = SimFingerPrint.getFP('');
+        // }
+        let fpEncodeStr = Base64.encode(JSON.stringify(fingerPrint));
+        this.setState({ fingerPrint: fingerPrint, fpEncodeStr: fpEncodeStr });
     }
 
     getExtra() {
@@ -44,12 +44,12 @@ export default class FingerPrintInfoForm extends React.Component {
     }
 
     render() {
-        const { fingerPrint, detailInfo } = this.state;
+        const { fpEncodeStr, fingerPrint } = this.state;
         return (<Card title={'设备指纹'} headStyle={MAntdCard.headerStyle('info')}
             extra={this.getExtra()}
             style={{ height: '100%', margin: 8 }}>
-                <TextArea value={fingerPrint} autoSize={{ minRows: 4, maxRows: 12 }} readOnly />
-                { renderAssetInfo(detailInfo) }
+                <TextArea value={fpEncodeStr} autoSize={{ minRows: 4, maxRows: 12 }} readOnly />
+                { renderAssetInfo(fingerPrint) }
             {/* <Form
                 labelCol={{ span: 6 }}
                 wrapperCol={{ span: 18 }}

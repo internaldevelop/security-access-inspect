@@ -33,6 +33,8 @@ class AssetAuthTable extends React.Component {
             selectRowIndex: -1,
         }
 
+        this.queryAssets();
+
         this.queryAuthRecords();
 
         this.handleAssetSelectChange = this.handleAssetSelectChange.bind(this);
@@ -48,6 +50,21 @@ class AssetAuthTable extends React.Component {
     handleResize = e => {
     }
 
+    queryAssetsCB = (response) => {
+        let data = response.payload.data;
+        if (typeof (data) === 'undefined') {
+            return;
+        }
+
+        let assetsList = data.map((item) => { return { uuid: item.uuid, classify: item.classify, name: item.name }; });
+        this.setState({ assetsList });
+    }
+
+    queryAssets() {
+        // flag: 1, 表示不需要返回指纹信息
+        RestReq.asyncGet(this.queryAssetsCB, '/embed-terminal/assets/get-assets', { flag: '' + 1 });
+    }
+
     queryAuthRecordsCB = (data) => {
         let authRecords = SimuAuthRecords.allAuths();
         authRecords = [];
@@ -55,17 +72,19 @@ class AssetAuthTable extends React.Component {
         let records = data.payload.data;
         for (let item of records) {
             let authRecord = {
-                index: '' + (authRecords.length + 1),
-                name: item.asset.name, 
+                index: (authRecords.length + 1),
+                name: item.asset.name,
+                // uuid: (authRecords.length + 1),
                 uuid: item.auth_uuid,
                 asset_uuid: item.asset_uuid,
-                ip: item.asset.ip, 
-                auth_result: item.authenticate_flag, 
+                ip: item.asset.ip,
+                auth_result: item.authenticate_flag,
+                result_cause: item.authenticate_flag,
                 auth_time: item.auth_time,
             };
             authRecords.push(authRecord);
         }
-        
+
         this.setState({ authRecords: authRecords });
     }
 
@@ -80,11 +99,14 @@ class AssetAuthTable extends React.Component {
 
     handleAssetSelectChange(value) {
         console.log(`selected ${value}`);
+        let uuid = value;
+        RestReq.asyncGet(this.queryAuthRecordsCB, '/embed-terminal/authenticate/authenticate-record', { asset_uuid: uuid });
     }
 
     getExtra() {
         const { assetsList } = this.state;
-        return MSelect.normal(assetsList, this.handleAssetSelectChange, '请选择终端...');
+        let options = assetsList.map((item) => { return { value: item.uuid, title: item.name }; });
+        return MSelect.normal(options, this.handleAssetSelectChange, '请选择终端...');
     }
 
     setRowClassName = (record) => {
@@ -96,12 +118,17 @@ class AssetAuthTable extends React.Component {
     onRow = (record) => {
         return {
             onClick: (event) => {
-                // 发送虚拟设备
                 let asset = SimAssets.getAsset(record.asset_uuid);
-                let basicInfo = { uuid: record.uuid, name: record.name, classify: asset.cls };
-                MEvent.send('my_select_asset_basic_info', basicInfo);
+                if (asset.hasOwnProperty('uuid')) {
+                    // 模拟代码，找到虚拟设备，发送虚拟设备信息
+                    let basicInfo = { uuid: record.uuid, name: record.name, classify: asset.cls };
+                    MEvent.send('my_select_asset_basic_info', basicInfo);
+                } else {
+                    // 发送真实认证记录
+                    MEvent.send('my_select_auth_record', record.uuid);
+                }
 
-                MEvent.send('my_select_auth_record', record.uuid);
+                // 设置当前选中行
                 this.setState({ selectRowIndex: record.index });
             },
         };

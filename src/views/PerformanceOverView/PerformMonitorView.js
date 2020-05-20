@@ -6,7 +6,12 @@ import MSingleTimeLine from '../../rlib/echarts/MSingleTimeLine';
 import MMultiTimeLine from '../../rlib/echarts/MMultiTimeLine';
 import MGauge from '../../rlib/echarts/MGauge';
 import MTimeUtils from '../../rlib/utils/MTimeUtils';
+import MNumUtils from '../../rlib/utils/MNumUtils';
 import MAntdCard from '../../rlib/props/MAntdCard';
+import { OpenSocket, CloseSocket } from '../../utils/WebSocket';
+import { sockMsgType } from '../../global/enumeration/SockMsgType'
+
+let l_socket = null;
 
 export default class PerformMonitorView extends React.Component {
     constructor(props) {
@@ -20,16 +25,77 @@ export default class PerformMonitorView extends React.Component {
             networkOut: [],
             memUsage: 0,
             diskUsage: 0,
+            lastPacketsRecv: -1,
+            lastPacketsSent: -1,
+            lastTimeStamp: 1,
         }
 
+        this.processAssetRealTimeInfo = this.processAssetRealTimeInfo.bind(this);
     }
 
     componentDidMount() {
         MEvent.register('my_update_perform_data', this.handleUpdate);
+        // l_socket = OpenSocket('asset_info', this.processAssetRealTimeInfo);
     }
 
     componentWillUnmount() {
         MEvent.unregister('my_update_perform_data', this.handleUpdate);
+
+        // CloseSocket(l_socket);
+    }
+
+    processAssetRealTimeInfo(data) {
+        let { asset_uuid, lastPacketsRecv, lastPacketsSent, lastTimeStamp } = this.state;
+
+        let message = JSON.parse(data);
+        // if (message.type !== sockMsgType.ASSET_REAL_TIME_INFO)
+        if (message.type !== sockMsgType.SINGLE_TASK_RUN_INFO)
+            return;
+
+        let assetInfo = message.payload;
+        if (assetInfo.asset_uuid !== asset_uuid)
+            return;
+        console.log(message);
+
+        // CPU 占用率
+        let cpuUsage = {
+            time: MTimeUtils.now(),
+            data: MNumUtils.fixed(assetInfo.CPU.systemCpuLoad * 100),
+        }
+        MEvent.send('CPU_' + asset_uuid, cpuUsage);
+
+        // 内存 占用率
+        let memPercent = 1.0 * (assetInfo.Memory.total - assetInfo.Memory.available) / assetInfo.Memory.total;
+        memPercent = MNumUtils.fixed(memPercent, 4);
+        MEvent.send('MEMORY_' + asset_uuid, memPercent);
+
+        // 磁盘占用率
+        let diskPercent = MNumUtils.fixed(assetInfo.Disks.usedPercentTotal / 100.0, 4); 
+        MEvent.send('DISK_' + asset_uuid, diskPercent);
+
+        // 网络包收发速度
+        let packetsRecv = assetInfo.NewworkObj.packetsRecv;
+        let packetsSent = assetInfo.NewworkObj.packetsSent;
+        let timeStamp = assetInfo.NewworkObj.timeStamp;
+
+        if (lastPacketsRecv < 0) {
+            lastPacketsRecv = packetsRecv;
+        }
+        if (lastPacketsSent < 0) {
+            lastPacketsSent = packetsSent;
+        }
+
+        let recvSpeed = (packetsRecv - lastPacketsRecv) / (timeStamp - lastTimeStamp);
+        recvSpeed = MNumUtils.fixed(recvSpeed);
+        let sentSpeed = (packetsRecv - lastPacketsRecv) / (timeStamp - lastTimeStamp);
+        sentSpeed = MNumUtils.fixed(sentSpeed);
+        let netUsage = {
+            time: MTimeUtils.now(),
+            data: [recvSpeed, sentSpeed]
+        }
+        MEvent.send('NET_' + asset_uuid, netUsage);
+
+        this.setState({lastPacketsRecv: packetsRecv, lastPacketsSent: packetsSent, lastTimeStamp: timeStamp});
     }
 
     handleUpdate = (infosList) => {
@@ -51,12 +117,12 @@ export default class PerformMonitorView extends React.Component {
         let usagesList = [];
         for (let i = 10; i >= 0; i--) {
             tm.setSeconds(tm.getSeconds() - 3000 * i);
-            usagesList.push({ time: MTimeUtils.formatStr(tm, 'UTC'), data: i / 5.0 });
+            usagesList.push({ time: MTimeUtils.formatStr(tm, 'UTC'), data: 0 });
         }
         let usagesList2 = [];
         for (let i = 10; i >= 0; i--) {
             tm.setSeconds(tm.getSeconds() - 3000 * i);
-            usagesList2.push({ time: MTimeUtils.formatStr(tm, 'UTC'), data: [i / 5.0, i / 3.0] });
+            usagesList2.push({ time: MTimeUtils.formatStr(tm, 'UTC'), data: [0, 0] });
         }
         let rowHeight = 130;
         return (<div>

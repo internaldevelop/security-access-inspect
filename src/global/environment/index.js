@@ -43,11 +43,12 @@ export function LoadEnvironConfig() {
             "终端漏洞利用工具"
         ],
         "ssl": false,
-        "mainServerPort": "8090",
+        "mainServerPort": "10110",
         "agentServerPort": "8191",
         "edbServerPort": "10091",
-        "mainServerUrl": "192.168.182.88",
-        "edbServerUrl": "192.168.182.88",
+        "websocketPort": "10902",
+        "mainServerUrl": "192.168.1.100",
+        "edbServerUrl": "192.168.1.100",
         // "appPath": "embed-terminal"
     };
 
@@ -105,7 +106,8 @@ export function GetAgentRootUrl(agentIp) {
 export function GetWebSocketUrl() {
     let protocol = _getWsProtocol();
     let url = global.myEnvironConfig.mainServerUrl;
-    let port = global.myEnvironConfig.mainServerPort;
+    // let port = global.myEnvironConfig.websocketPort;
+    let port = '10902';
     return protocol + '://' + url + ':' + port + '/websocket/';
 }
 
