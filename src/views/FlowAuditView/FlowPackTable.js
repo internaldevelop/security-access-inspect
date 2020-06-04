@@ -14,15 +14,14 @@ const { confirm } = Modal;
 function tableColumns() {
     let colsList = [
         { title: '序号', width: 100, dataIndex: 'index' },
-        { title: '时间', width: 200, dataIndex: 'parse_time', myNoWrap: true, mySort: true },
-        { title: '源IP', width: 160, dataIndex: 'source_ip', myNoWrap: true, mySort: true },
-        { title: '源端口', width: 100, dataIndex: 'source_port', mySort: true },
-        { title: '目的IP', width: 160, dataIndex: 'dest_ip', myNoWrap: true, mySort: true },
-        { title: '目的端口', width: 120, dataIndex: 'dest_port', mySort: true },
-        { title: '方向', width: 100, dataIndex: 'direction', mySort: true },
-        { title: '传输协议', width: 120, dataIndex: 'transport_protocol', mySort: true },
-        { title: '应用协议', width: 150, dataIndex: 'app_protocol', mySort: true },
-        // { title: '时间', width: 150, dataIndex: 'auth_time', myNoWrap: true, mySort: true },
+        { title: '时间', width: 200, dataIndex: 'parse_time', myNoWrap: true, },
+        { title: '源IP', width: 160, dataIndex: 'source_ip', myNoWrap: true, },
+        { title: '源端口', width: 100, dataIndex: 'source_port', },
+        { title: '目的IP', width: 160, dataIndex: 'dest_ip', myNoWrap: true, },
+        { title: '目的端口', width: 120, dataIndex: 'dest_port', },
+        { title: '方向', width: 100, dataIndex: 'direction', },
+        { title: '传输协议', width: 120, dataIndex: 'transport_protocol', },
+        { title: '应用协议', width: 150, dataIndex: 'app_protocol', },
     ];
 
     // 按照各列的定义构建列元素
@@ -47,6 +46,7 @@ class FlowPackTable extends React.Component {
         }
 
         this.state = {
+            assetUuid: '1',
             visible: visible,
             asset: {},
             columns: tableColumns(),
@@ -54,7 +54,7 @@ class FlowPackTable extends React.Component {
             pageSize: 10,
             currentPage: 1,     // Table中当前页码（从 1 开始）
             selectRowIndex: -1,
-
+            totalRecords: 0,
         };
 
         this.handleFetchAssetPacks = this.handleFetchAssetPacks.bind(this);
@@ -113,13 +113,17 @@ class FlowPackTable extends React.Component {
             packsList.push(pack);
         }
 
-        this.setState({ dataSource: packsList });
+        let totalRecords = response.payload.totalResults;
+
+        this.setState({ dataSource: packsList, totalRecords });
         this.showTable();
     }
 
     handleFetchAssetPacks(asset_uuid) {
-        RestReq.asyncGet(this.fetchAssetPacksCB, '/embed-terminal/network/packet/get-datas', {asset_uuid, }, { token: false });
+        const { currentPage, pageSize } = this.state;
+        RestReq.asyncGet(this.fetchAssetPacksCB, '/embed-terminal/network/packet/get-datas', {asset_uuid, page_num: currentPage, page_size: pageSize}, { token: false });
         // this.showTable();
+        this.setState({assetUuid: asset_uuid});
     }
 
     componentDidMount() {
@@ -146,57 +150,17 @@ class FlowPackTable extends React.Component {
 
     /** 处理页面变化（页面跳转/切换/每页记录数变化） */
     handlePageChange = (currentPage, pageSize) => {
+        const { assetUuid } = this.state;
         this.setState({ currentPage, pageSize });
+        RestReq.asyncGet(this.fetchAssetPacksCB, '/embed-terminal/network/packet/get-datas', {asset_uuid: assetUuid, page_num: currentPage, page_size: pageSize}, { token: false });
     }
-
-    render1() {
-        const { visible, dataSource, columns } = this.state;
-        let self = this;
-        // return (<Draggable>
-        //     <div style={{ top: 20}}>I can now be moved around!</div>
-        //   </Draggable>);
-        return (<div>
-            <Draggable>
-                {/* <AntdDraggableModal
-            title="流量包解析"
-            visible={visible}
-            width={1200}
-            style={{ top: 20 }}
-            closable
-            onCancel={this.hideTable}
-            footer={[<Button key="submit" type="primary" onClick={this.hideTable}> 关闭 </Button>]}
-        // onOk={this.handleOk}
-        //     onCancel={this.handleCancel}
-          > */}
-
-                <Modal
-                    title="流量包解析"
-                    visible={visible}
-                    width={1200}
-                    style={{ top: 20 }}
-                    closable
-                    onCancel={this.hideTable}
-                    footer={[<Button key="submit" type="primary" onClick={this.hideTable}> 关闭 </Button>]}
-                >
-                    <Table
-                        columns={columns}
-                        dataSource={dataSource}
-                        bordered={true}
-                        rowKey={record => record.uuid}
-                        rowClassName={this.setRowClassName}
-                        // onRow={this.onRow}
-                        pagination={MAntdTable.pagination(self.handlePageChange)}
-                    />
-                </Modal>
-                {/* </AntdDraggableModal> */}
-            </Draggable>
-        </div>);
-    }
-
 
     render() {
-        const { visible, dataSource, columns } = this.state;
+        const { visible, dataSource, columns, currentPage, totalRecords } = this.state;
         let self = this;
+        let pagination = MAntdTable.pagination(self.handlePageChange);
+        pagination.page = currentPage;
+        pagination.total = totalRecords;
         // return (<Draggable>
         //     <div style={{ top: 20}}>I can now be moved around!</div>
         //   </Draggable>);
@@ -218,7 +182,7 @@ class FlowPackTable extends React.Component {
                         rowKey={record => record.uuid}
                         rowClassName={this.setRowClassName}
                         // onRow={this.onRow}
-                        pagination={MAntdTable.pagination(self.handlePageChange)}
+                        pagination={pagination}
                     />
                 </AntdDraggableModal>)}
         </div>);
