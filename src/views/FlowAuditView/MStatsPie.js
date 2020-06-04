@@ -100,7 +100,7 @@ export default class MStatsPie extends Component {
 
         if (extraParams.hasOwnProperty('onClick')) {
             // message.error(param.data['name'] + ': ' + param.data['value']);
-            extraParams['onClick'](param.data['name']);
+            extraParams['onClick'](param.data);
         }
     }
 

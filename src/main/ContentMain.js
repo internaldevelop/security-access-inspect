@@ -44,7 +44,8 @@ class ContentMain extends React.Component {
 
         <PrivateRoute exact path='/home/about' component={AboutView} />
 
-        <Redirect exact from='/' to='/home' />
+        <Redirect exact from='/' to='/home/assets-scan' />
+        <Redirect exact from='/home' to='/home/assets-scan' />
       </Switch>
     );
   }

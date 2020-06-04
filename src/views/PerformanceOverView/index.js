@@ -79,17 +79,17 @@ class PerformanceOverView extends React.Component {
         const { stats } = this.state;
         let data = response.payload;
         // 终端总数
-        stats[0].value = data.all_num;
+        stats[0].value = data.all_count;
         // 白名单
-        stats[1].value = data.white_list_num;
+        stats[1].value = data.white_list_count;
         // 黑名单
-        stats[2].value = data.blacklist_num;
+        stats[2].value = data.blacklist_count;
         // 在线
-        stats[3].value = data.on_line_num;
+        stats[3].value = data.on_line_count;
         // 认证成功
-        stats[4].value = data.auth_num;
+        stats[4].value = data.auth_success_count;
         // 认证失败
-        stats[5].value = data.unprocessed_num;
+        stats[5].value = data.auth_fail_count;
 
         this.setState({ stats, hasStats: true });
     }

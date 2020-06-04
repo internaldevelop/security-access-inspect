@@ -4,17 +4,23 @@ import Draggable from 'react-draggable';
 import MStatsBar from './MStatsBar';
 import MStatsPie from './MStatsPie';
 import MNumUtils from '../../rlib/utils/MNumUtils';
+import MObjUtils from '../../rlib/utils/MObjUtils';
 import MAntdCard from '../../rlib/props/MAntdCard';
-import { statBarByDay, totalPieByIO, outPieByIP, inPieByIP, statBarByIP } from './StatCharts';
+import RestReq from '../../utils/RestReq';
+import { statBarByDay, totalPieByIO, outPieByAsset, inPieByAsset, statBarByTerminal } from './StatCharts';
 import FlowPackTable from './FlowPackTable';
+import SimNetStats from '../../modules/simdata/SimNetStats';
 
 class FlowAuditView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             // assets: [] = SimAssets.allAssets(),
-            stats: this.fetchVirtualStats(),
+            stats: SimNetStats.fetchVirtualStats(),
+            hasData: false,
         };
+
+        this.fetchStats();
 
     }
     componentDidMount() {
@@ -23,58 +29,55 @@ class FlowAuditView extends React.Component {
     componentWillUnmount() {
     }
 
-    fetchVirtualStats() {
-        let stats = {};
-        stats['netIOTotal'] = [{ name: '接收', value: MNumUtils.rand(800) + 1120 }, { name: '发送', value: MNumUtils.rand(800) + 1120 }];
+    fetchStatsCB = (response) => {
+        let payload = response.payload;
+        let stats = MObjUtils.deepClone(this.state.stats);
+        // 接收发送总数饼图数据
+        stats['netIOTotal'] = [{ name: '接收', value: payload.all_recv_count }, { name: '发送', value: payload.all_sent_count }];
 
-        let outIPTotal = [];
-        for (let index = 11; index <= 28; index++) {
-            outIPTotal.push({ name: '192.168.1.' + (index), value: MNumUtils.rand(800) + 200 });
+        let details = payload.details;
+        for (let asset of details) {
+            // 各资产接收饼图数据
+            let inRecord = { name: asset.asset_name, value: asset.recv_count, asset_ip: asset.asset_ip, asset_uuid: asset.asset_uuid };
+            stats['inIPTotal'].push(inRecord);
+            // 各资产发送饼图数据
+            let outRecord = { name: asset.asset_name, value: asset.sent_count, asset_ip: asset.asset_ip, asset_uuid: asset.asset_uuid };
+            stats['outIPTotal'].push(outRecord);
+            // 各资产接收发送条形图数据
+            let record = [asset.asset_name, asset.recv_count,asset.sent_count, asset.asset_ip, asset.asset_uuid];
+            stats['ipStat'].push(record);
         }
-        stats['outIPTotal'] = outIPTotal;
 
-        let inIPTotal = [];
-        for (let index = 11; index <= 28; index++) {
-            inIPTotal.push({ name: '192.168.1.' + (index), value: MNumUtils.rand(800) + 200 });
-        }
-        stats['inIPTotal'] = inIPTotal;
+        this.setState({ stats, hasData: true });
+    }
 
-        let dayStat = [['flow', '接收（每日）', '发送（每日）'],];
-        for (let index = 1; index <= 30; index++) {
-            dayStat.push(['2020-8-' + index, MNumUtils.rand(800) + 20, MNumUtils.rand(1000) + 100])
-        }
-        stats['dayStat'] = dayStat;
-
-        let ipStat = [['flow', '接收', '发送'],];
-        for (let index = 1; index <= 30; index++) {
-            ipStat.push(['192.168.1.' + index, MNumUtils.rand(800) + 20, MNumUtils.rand(1000) + 100])
-        }
-        stats['ipStat'] = ipStat;
-
-        return stats;
+    fetchStats() {
+        RestReq.asyncGet(this.fetchStatsCB, '/embed-terminal/network/packet/statistics', {});
     }
 
     render() {
-        const { stats } = this.state;
+        const { stats, hasData } = this.state;
         let rowHeight = 200;
         return (
             <div>
-                <Row gutter={20} style={{ marginBottom: 24 }}>
-                    <Col span={18}> {statBarByIP(stats['ipStat'])} </Col>
-                    <Col span={6}> {totalPieByIO(stats['netIOTotal'])} </Col>
-                </Row>
-                <Row gutter={20} style={{ marginBottom: 24 }}>
-                    <Col span={12}> {outPieByIP(stats['outIPTotal'])} </Col>
-                    <Col span={12}> {inPieByIP(stats['inIPTotal'])} </Col>
-                </Row>
-                <Row gutter={20} style={{ marginBottom: 24 }}>
-                    {/* {statBarByDay(stats['dayStat'])} */}
-                </Row>
+                {hasData && <div>
+                    <Row gutter={20} style={{ marginBottom: 24 }}>
+                        <Col span={18}> {statBarByTerminal(stats['ipStat'])} </Col>
+                        <Col span={6}> {totalPieByIO(stats['netIOTotal'])} </Col>
+                    </Row>
+                    <Row gutter={20} style={{ marginBottom: 24 }}>
+                        <Col span={12}> {outPieByAsset(stats['outIPTotal'])} </Col>
+                        <Col span={12}> {inPieByAsset(stats['inIPTotal'])} </Col>
+                    </Row>
+                    <Row gutter={20} style={{ marginBottom: 24 }}>
+                        {/* {statBarByDay(stats['dayStat'])} */}
+                    </Row>
 
-                {/* <Draggable defaultPosition={{x: 100, y: 0}}>
+                    {/* <Draggable defaultPosition={{x: 100, y: 0}}>
                     <div style={{ top: 20 }}>I can now be moved around!</div>
-                </Draggable> */}
-                <FlowPackTable />
+                    </Draggable> */}
+                    <FlowPackTable />
+                </div>}
             </div>
         );
     }

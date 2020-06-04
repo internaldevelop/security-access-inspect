@@ -92,7 +92,7 @@ export default class MStatsBar extends Component {
 
         if (extraParams.hasOwnProperty('onClick')) {
             // message.error(param.data[0] + ': ' + param.data[1] + ', ' + param.data[2]);
-            extraParams['onClick'](param.data[0]);
+            extraParams['onClick'](param.data);
         }
     }
 

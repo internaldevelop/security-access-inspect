@@ -11,19 +11,9 @@ import RestReq from '../../utils/RestReq';
 
 const { confirm } = Modal;
 
-export function getFlowPackByDay(day) {
-    // message.error('每日统计--' + day);
-    MEvent.send('my_fetch_asset_packs', 1);
-}
-
-export function getFlowPackByAsset(asset_uuid) {
-    // message.error('IP统计--' + ipAddr);
-    MEvent.send('my_fetch_asset_packs', 'd6adc99a-2dd4-4402-8a86-4a8f0bdcfcd2');
-}
-
 function tableColumns() {
     let colsList = [
-        { title: '序号', width: 60, dataIndex: 'index' },
+        { title: '序号', width: 100, dataIndex: 'index' },
         { title: '时间', width: 200, dataIndex: 'parse_time', myNoWrap: true, mySort: true },
         { title: '源IP', width: 160, dataIndex: 'source_ip', myNoWrap: true, mySort: true },
         { title: '源端口', width: 100, dataIndex: 'source_port', mySort: true },
@@ -106,7 +96,7 @@ class FlowPackTable extends React.Component {
 
     fetchAssetPacksCB = (response) => {
         let packsList = [];
-        let records = response.payload;
+        let records = response.payload.data;
         for (let index in records) {
             let record = records[index];
             let pack = {
@@ -127,8 +117,8 @@ class FlowPackTable extends React.Component {
         this.showTable();
     }
 
-    handleFetchAssetPacks(params) {
-        RestReq.asyncGet(this.fetchAssetPacksCB, '/embed-terminal/network/packet/get-datas', {}, { token: false });
+    handleFetchAssetPacks(asset_uuid) {
+        RestReq.asyncGet(this.fetchAssetPacksCB, '/embed-terminal/network/packet/get-datas', {asset_uuid, }, { token: false });
         // this.showTable();
     }
 
