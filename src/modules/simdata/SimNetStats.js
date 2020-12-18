@@ -12,7 +12,7 @@ class SimNetStats {
     fetchVirtualStats() {
         let stats = {};
         let start = 11;
-        let end = 24;
+        let end = 11;
 
         // 用于接收发送百分比的饼图
         stats['netIOTotal'] = [{ name: '接收', value: MNumUtils.rand(800) + 1120 }, { name: '发送', value: MNumUtils.rand(800) + 1120 }];

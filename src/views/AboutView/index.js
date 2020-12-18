@@ -33,7 +33,7 @@ class AboutView extends React.Component {
 
     GetSystemInfo() {
         let sysInfo = {
-            sysName: '电网嵌入式终端安全接入与检测工具',
+            sysName: '电网嵌入式终端安全接入与监测系统',
             desc: '电网嵌入式终端安全接入与检测模块，具备设备接入认证、实时监测、流量审计等安全功能，并在配电网监控系统或变电站自动化监控系统中进行试点应用。',
             sysVer: '1.0.1.97',
             copyright: 'Copyright ©2019-2022 中国电科院',

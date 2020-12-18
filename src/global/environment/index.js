@@ -35,7 +35,7 @@ export function LoadEnvironConfig() {
         "viewMinWidth": 1100,
         "systemType": 0,
         "systemName": [
-            "电网嵌入式终端安全接入与检测工具",
+            "电网嵌入式终端安全接入与监测系统",
             "主站 & 终端系统自动化配置核查工具",
             "主站系统自动化配置核查工具",
             "终端系统自动化配置检测工具",
